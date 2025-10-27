@@ -1,0 +1,326 @@
+{
+"profile_name": "SuitUp_Minimal_Fashion_DS",
+"description": "A modern, minimal, fashion-retail inspired mobile design system: airy whites, soft shadows, rounded cards, outline icons, bottom tab navigation, grid-based wardrobe browsing and a collage-like outfit builder.",
+"brand_tone": {
+"keywords": ["minimal", "elegant", "airy", "neutral", "fashion-forward", "accessible"],
+"voice": "short, confident labels; calm microcopy; avoid exclamation unless CTA"
+},
+"theming": {
+"base_grid": 8,
+"radii": {
+"xs": 6,
+"sm": 10,
+"md": 14,
+"lg": 16,
+"xl": 20,
+"pill": 999
+},
+"elevation": {
+"none": { "y": 0, "blur": 0, "spread": 0, "color": "rgba(0,0,0,0)" },
+"sm": { "y": 2, "blur": 8, "spread": 0, "color": "rgba(0,0,0,0.06)" },
+"md": { "y": 6, "blur": 16, "spread": 0, "color": "rgba(0,0,0,0.08)" },
+"lg": { "y": 10, "blur": 24, "spread": 0, "color": "rgba(0,0,0,0.10)" }
+},
+"opacity": { "disabled": 0.38, "muted": 0.64, "divider": 0.12, "overlay": 0.08 },
+"motion": {
+"duration_ms": { "fast": 120, "base": 180, "slow": 240 },
+"easing": {
+"in": "cubic-bezier(0.4, 0, 1, 1)",
+"out": "cubic-bezier(0, 0, 0.2, 1)",
+"in_out": "cubic-bezier(0.4, 0, 0.2, 1)"
+}
+},
+"touch_targets_px": { "min": 44 }
+},
+"color": {
+"light": {
+"background": "#F7F7F7",
+"surface": "#FFFFFF",
+"surface_alt": "#FAFAFA",
+"text_primary": "#121212",
+"text_secondary": "#6A6A6A",
+"text_tertiary": "#9A9A9A",
+"border_subtle": "#EAEAEA",
+"border_strong": "#DDDDDD",
+"accent": "#121212",
+"accent_muted": "#2C2C2C",
+"positive": "#2E7D32",
+"warning": "#B26A00",
+"danger": "#C62828",
+"shadow": "rgba(0,0,0,0.06)"
+},
+"dark": {
+"background": "#0E0E0E",
+"surface": "#161616",
+"surface_alt": "#1C1C1C",
+"text_primary": "#FFFFFF",
+"text_secondary": "#C7C7C7",
+"text_tertiary": "#9E9E9E",
+"border_subtle": "#2A2A2A",
+"border_strong": "#333333",
+"accent": "#FFFFFF",
+"accent_muted": "#E6E6E6",
+"positive": "#58D06C",
+"warning": "#FFC266",
+"danger": "#FF6B6B",
+"shadow": "rgba(0,0,0,0.45)"
+}
+},
+"typography": {
+"primary_family": ["SF Pro", "Inter", "System"],
+"display_family": ["Playfair Display", "Georgia", "Serif"],
+"scale": {
+"display_lg": { "size": 34, "line": 40, "weight": 700, "tracking": -0.5 },
+"display_md": { "size": 28, "line": 34, "weight": 700, "tracking": -0.25 },
+"h1": { "size": 22, "line": 28, "weight": 700 },
+"h2": { "size": 18, "line": 24, "weight": 700 },
+"subtitle": { "size": 16, "line": 22, "weight": 600 },
+"body": { "size": 15, "line": 20, "weight": 500 },
+"body_muted": { "size": 14, "line": 18, "weight": 500 },
+"caption": { "size": 12, "line": 16, "weight": 500 },
+"overline": { "size": 11, "line": 14, "weight": 700, "case": "uppercase", "tracking": 1.2 },
+"button": { "size": 15, "line": 20, "weight": 700 }
+},
+"usage": {
+"brand_wordmark": "display_family on landing/hero screens",
+"section_titles": "overline for section label + h2 for section heading",
+"card_titles": "body with 600 weight",
+"meta": "caption/body_muted with text_tertiary color"
+}
+},
+"iconography": {
+"style": "outline",
+"stroke_width": 2,
+"corner_style": "rounded",
+"sizes": { "sm": 18, "md": 22, "lg": 28 },
+"color_usage": { "default": "text_primary", "inactive": "text_secondary", "accented": "accent" }
+},
+"layout": {
+"app_bar": { "height": 56, "background": "surface", "shadow": "sm", "title_typography": "h1" },
+"tab_bar": {
+"height": 72,
+"background": "surface",
+"shadow": "sm",
+"active_tint": "accent",
+"inactive_tint": "text_secondary",
+"icon_above_label": true,
+"safe_area_inset": true
+},
+"page_padding": { "x": 16, "y": 12 },
+"list_spacing": { "row": 12, "section_gap": 20 },
+"grid": {
+"columns": 2,
+"gutter": 12,
+"card_min_width": 156,
+"image_aspect_ratio": "4:5",
+"card_radius": "lg"
+},
+"floating_actions": {
+"primary_fab": { "diameter": 56, "position": { "bottom": 24, "centered": true }, "elevation": "lg" },
+"secondary_fabs": { "diameter": 44 }
+}
+},
+"components": {
+"search_bar": {
+"shape": "pill",
+"height": 40,
+"left_icon": "search",
+"background": "surface_alt",
+"border": { "color": "border_subtle", "width": 1 },
+"placeholder_color": "text_tertiary"
+},
+"segmented_pill": {
+"height": 36,
+"radius": "pill",
+"background": "surface_alt",
+"thumb": { "background": "surface", "shadow": "sm", "border": "border_subtle" },
+"typography": "body",
+"spacing": 4
+},
+"section_header": {
+"kicker_typography": "overline",
+"title_typography": "h2",
+"meta_typography": "caption",
+"padding_top": 8,
+"padding_bottom": 8
+},
+"item_card": {
+"container": {
+"radius": "lg",
+"background": "surface",
+"shadow": "sm",
+"border": { "color": "border_subtle", "width": 1 }
+},
+"image": { "aspect_ratio": "4:5", "radius": "md", "fit": "contain", "background": "surface_alt" },
+"title_typography": "body",
+"subtitle_typography": "caption",
+"metadata_color": "text_tertiary",
+"padding": 10,
+"spacing": 6
+},
+"list_card": {
+"height": 72,
+"radius": "md",
+"shadow": "none",
+"divider": "border_subtle",
+"thumbnail": { "size": 56, "radius": "md" }
+},
+"toggle_view_button": {
+"type": "two-state",
+"icons": ["list", "grid"],
+"shape": "capsule",
+"background": "surface",
+"shadow": "sm",
+"position": { "floating_over_grid_edge": true }
+},
+"cta_primary": {
+"shape": "pill",
+"height": 44,
+"background": "accent",
+"text_color": "surface",
+"pressed_overlay": "overlay"
+},
+"fab_primary": {
+"icon": "plus",
+"diameter": 56,
+"background": "accent",
+"icon_color": "surface",
+"shadow": "lg"
+},
+"chip": {
+"height": 32,
+"radius": "pill",
+"background": "surface_alt",
+"border": "border_subtle",
+"text": "body",
+"selected": { "background": "accent", "text_color": "surface" }
+},
+"filters_row": {
+"scroll_direction": "horizontal",
+"gap": 8,
+"items": "chip"
+},
+"toolbar": {
+"height": 44,
+"background": "surface",
+"icons": "iconography",
+"shadow": "none",
+"border_bottom": "border_subtle"
+},
+"bottom_sheet": {
+"radius_top": 20,
+"handlebar": { "width": 36, "height": 4, "radius": 2, "color": "border_strong" },
+"scrim": "rgba(0,0,0,0.2)"
+},
+"weather_badge": {
+"layout": "row",
+"icon": "cloud/sun/rain minimal outline",
+"typography": "caption",
+"chip_style": true,
+"background": "surface_alt"
+},
+"outfit_canvas": {
+"background": "surface",
+"grid_overlay": false,
+"item_render": { "shadow": "sm", "radius": "md" },
+"controls": {
+"swap_shuffle_button": { "shape": "circular", "size": 56, "elevation": "lg" },
+"save_button": { "style": "cta_primary", "position": "right_edge_vertical" }
+},
+"gestures": { "drag_drop": true, "tap_to_select": true, "long_press_to_edit": true }
+},
+"nav_top_dropdown": {
+"shape": "pill",
+"background": "surface",
+"border": "border_subtle",
+"icon_right": "chevron-down",
+"text": "body"
+}
+},
+"patterns": {
+"home_tabs": ["home", "wardrobe", "add", "outfits", "profile"],
+"wardrobe_screen": {
+"header": ["profile_avatar", "search_bar", "context_dropdown"],
+"sections": [
+{ "label": "category_overline + heading", "content": "grid of item_card" }
+],
+"empty_state": {
+"icon": "hanger",
+"title": "Add your first item",
+"helper": "Use the + to snap a photo and start your closet",
+"cta": "fab_primary"
+}
+},
+"add_item_flow": {
+"steps": ["photo_capture", "auto_prefill_review", "details_form", "save"],
+"form_groups": ["basics", "attributes", "seasonality", "care_notes"],
+"button_layout": "sticky_footer_next_back"
+},
+"outfit_builder_screen": {
+"canvas_top": true,
+"controls_bottom_central": "swap_shuffle_button",
+"accessory_controls": ["list/grid toggle", "try-on stub", "save outfit CTA"],
+"feedback_toasts": ["Saved to Outfits", "Replaced item"]
+}
+},
+"data_visuals": {
+"charts": {
+"style": "minimal",
+"axis_color": "border_strong",
+"label_typography": "caption",
+"cards": { "radius": "lg", "padding": 12, "shadow": "sm" }
+}
+},
+"content_rules": {
+"titles_case": "sentence",
+"overline_case": "uppercase",
+"date_format": "relative for recency (e.g., 'Not worn recently'), else short date",
+"truncate_lines": { "card_title": 1, "subtitle": 1 }
+},
+"accessibility": {
+"min_contrast_ratio": 4.5,
+"focus_visible": true,
+"hit_slop": 8,
+"dynamic_type_support": true,
+"voice_over_labels": {
+"tab_icons": "include text equivalents",
+"outfit_canvas_items": "announce slot and item name"
+},
+"haptics": {
+"tap": "light",
+"save": "medium",
+"drag_drop_snap": "selection"
+}
+},
+"responsive_rules": {
+"compact_width": { "grid_columns": 2, "card_min_width": 150 },
+"medium_width": { "grid_columns": 3, "card_min_width": 160 },
+"landscape": { "show_persistent_filters": true, "two_pane_outfit_builder": true }
+},
+"image_guidelines": {
+"background": "neutral or transparent; avoid harsh drop shadows",
+"fit": "contain with generous padding",
+"corner_radius": "md",
+"placeholder": { "icon": "image", "tint": "text_tertiary", "background": "surface_alt" }
+},
+"states": {
+"loading": { "skeleton": true, "duration_ms": 800, "bone_color": "#EEEEEE", "highlight_color": "#F6F6F6" },
+"empty": { "icon": "hanger", "title": "Nothing here yet", "helper": "Add items to get recommendations" },
+"error": { "banner_bg": "#FFF3F3", "text": "#C62828", "action": "Retry" }
+},
+"tokens_export_example": {
+"color.primary": "{color.light.accent}",
+"radius.card": "{theming.radii.lg}",
+"shadow.card": "{theming.elevation.sm}",
+"spacing.gridGutter": "{layout.grid.gutter}",
+"type.cardTitle": "{typography.scale.body}"
+},
+"usage_notes_for_AI": [
+"Favor whitespace and soft elevation; never dense borders.",
+"Use overline kicker + bold heading for section intros on wardrobe lists.",
+"Grid item cards should prioritize the product image with minimal text below.",
+"Bottom tab bar uses outline icons with short labels; center tab is primary action (+).",
+"Outfit builder uses collage-style large imagery on a white canvas with a floating shuffle control.",
+"All components should inherit colors from the theme tokens; do not hardcode hex values in components."
+]
+}
