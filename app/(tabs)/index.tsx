@@ -446,7 +446,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingBottom: spacing.jumbo,
+    paddingBottom: 120, // Account for 80px tab bar + safe area + comfortable spacing
     gap: spacing.xl,
   },
   centered: {

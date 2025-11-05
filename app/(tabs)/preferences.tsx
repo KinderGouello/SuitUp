@@ -257,7 +257,9 @@ const styles = StyleSheet.create({
     backgroundColor: theme.background,
   },
   content: {
-    padding: spacing.large,
+    paddingHorizontal: spacing.large,
+    paddingTop: spacing.large,
+    paddingBottom: 120, // Account for 80px tab bar + safe area + comfortable spacing
     gap: spacing.xlarge,
   },
   centered: {

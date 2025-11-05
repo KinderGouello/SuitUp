@@ -179,7 +179,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   content: {
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 120, // Account for 80px tab bar + safe area + comfortable spacing
     gap: 32,
   },
   centered: {

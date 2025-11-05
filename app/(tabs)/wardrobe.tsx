@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
   // Mosaic Grid
   list: {
     paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.xxl,
+    paddingBottom: 120, // Account for 80px tab bar + safe area + comfortable spacing
   },
   row: {
     gap: spacing.lg,
