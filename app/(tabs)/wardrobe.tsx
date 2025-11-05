@@ -6,15 +6,29 @@ import {
   FlatList,
   TextInput,
   Pressable,
+  Modal,
   ActivityIndicator,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ItemCard } from '@/components/ItemCard';
 import { Button } from '@/components/Button';
 import { useWardrobe } from '@/state/useWardrobe';
-import { Plus, Search, Filter, Sparkles } from 'lucide-react-native';
+import {
+  Search,
+  Sparkles,
+  SlidersHorizontal,
+  ChevronDown,
+  Check,
+} from 'lucide-react-native';
 import { Category } from '@/lib/types';
-import { theme, typography, spacing, radii, elevation, colors } from '@/lib/styles/tokens';
+import {
+  theme,
+  typography,
+  spacing,
+  radii,
+  elevation,
+  colors,
+} from '@/lib/styles/tokens';
 import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 
@@ -26,6 +40,7 @@ export default function WardrobeScreen() {
   const [selectedCategory, setSelectedCategory] = useState<Category | 'all'>(
     'all'
   );
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   useEffect(() => {
     loadItems();
@@ -40,15 +55,15 @@ export default function WardrobeScreen() {
     }
   };
 
-  const categories: Array<Category | 'all'> = [
-    'all',
-    'top',
-    'bottom',
-    'dress',
-    'outerwear',
-    'shoes',
-    'accessory',
-    'athleisure',
+  const filterOptions: Array<{ label: string; value: Category | 'all' }> = [
+    { label: 'All Items', value: 'all' },
+    { label: 'Tops', value: 'top' },
+    { label: 'Bottoms', value: 'bottom' },
+    { label: 'Dresses', value: 'dress' },
+    { label: 'Outerwear', value: 'outerwear' },
+    { label: 'Shoes', value: 'shoes' },
+    { label: 'Accessories', value: 'accessory' },
+    { label: 'Athleisure', value: 'athleisure' },
   ];
 
   const filteredItems =
@@ -70,9 +85,7 @@ export default function WardrobeScreen() {
       <View style={styles.header}>
         <View style={styles.headerText}>
           <MaskedView
-            maskElement={
-              <Text style={styles.titleMask}>My Collection</Text>
-            }
+            maskElement={<Text style={styles.titleMask}>My Collection</Text>}
           >
             <LinearGradient
               colors={[colors.indigo600, colors.sky500]}
@@ -80,7 +93,9 @@ export default function WardrobeScreen() {
               end={{ x: 1, y: 0 }}
               style={styles.gradientTitle}
             >
-              <Text style={[styles.titleMask, { opacity: 0 }]}>My Collection</Text>
+              <Text style={[styles.titleMask, { opacity: 0 }]}>
+                My Collection
+              </Text>
             </LinearGradient>
           </MaskedView>
           <View style={styles.subtitleContainer}>
@@ -94,46 +109,93 @@ export default function WardrobeScreen() {
 
       {/* Search Bar */}
       <View style={styles.searchContainer}>
-        <View style={styles.searchBar}>
-          <Search size={20} color={colors.indigo400} strokeWidth={2} />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search your style..."
-            value={searchQuery}
-            onChangeText={handleSearch}
-            placeholderTextColor={theme.text_muted}
-          />
+        <View style={styles.searchRow}>
+          <View style={styles.searchBar}>
+            <Search size={20} color={colors.indigo400} strokeWidth={2} />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search your style..."
+              value={searchQuery}
+              onChangeText={handleSearch}
+              placeholderTextColor={theme.text_muted}
+            />
+          </View>
+          <Pressable
+            style={styles.filterTrigger}
+            onPress={() => setIsFilterOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel="Filter wardrobe items"
+            accessibilityHint="Opens a list of wardrobe filters"
+          >
+            <SlidersHorizontal
+              size={18}
+              color={colors.indigo500}
+              strokeWidth={2}
+            />
+            <Text style={styles.filterTriggerLabel}>
+              {filterOptions.find((option) => option.value === selectedCategory)
+                ?.label ?? 'All Items'}
+            </Text>
+            <ChevronDown
+              size={16}
+              color={theme.text_secondary}
+              strokeWidth={2}
+            />
+          </Pressable>
         </View>
       </View>
 
-      {/* Category Filters */}
-      <View style={styles.filtersSection}>
-        <FlatList
-          horizontal
-          data={categories}
-          keyExtractor={(item) => item}
-          renderItem={({ item }) => (
-            <Pressable
-              style={[
-                styles.categoryChip,
-                selectedCategory === item && styles.categoryChipActive,
-              ]}
-              onPress={() => setSelectedCategory(item)}
-            >
-              <Text
-                style={[
-                  styles.categoryChipText,
-                  selectedCategory === item && styles.categoryChipTextActive,
-                ]}
-              >
-                {item === 'all' ? 'All Items' : item}
-              </Text>
-            </Pressable>
-          )}
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.filtersContent}
-        />
-      </View>
+      <Modal
+        visible={isFilterOpen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setIsFilterOpen(false)}
+      >
+        <View style={styles.filterModalOverlay}>
+          <Pressable
+            style={StyleSheet.absoluteFill}
+            onPress={() => setIsFilterOpen(false)}
+            accessibilityLabel="Dismiss filter menu"
+          />
+          <View style={styles.filterModalCard}>
+            {filterOptions.map((option) => {
+              const isActive = option.value === selectedCategory;
+              return (
+                <Pressable
+                  key={option.value}
+                  onPress={() => {
+                    setSelectedCategory(option.value);
+                    setIsFilterOpen(false);
+                  }}
+                  style={[
+                    styles.filterOption,
+                    isActive && styles.filterOptionActive,
+                  ]}
+                  accessibilityRole="menuitem"
+                  accessibilityState={{ selected: isActive }}
+                >
+                  <Text
+                    style={[
+                      styles.filterOptionText,
+                      isActive && styles.filterOptionTextActive,
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+                  {isActive && (
+                    <Check
+                      size={16}
+                      color={colors.indigo500}
+                      strokeWidth={2.5}
+                      style={styles.filterOptionIcon}
+                    />
+                  )}
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
+      </Modal>
 
       {filteredItems.length === 0 ? (
         <View style={styles.emptyState}>
@@ -210,8 +272,13 @@ const styles = StyleSheet.create({
   },
   // Search Bar
   searchContainer: {
-    paddingHorizontal: spacing.xl,
+    paddingHorizontal: spacing.medium,
     paddingBottom: spacing.lg,
+  },
+  searchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
   },
   searchBar: {
     flexDirection: 'row',
@@ -223,41 +290,70 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     borderWidth: 1.5,
     borderColor: colors.indigo200,
+    flex: 1,
   },
   searchInput: {
     flex: 1,
     ...typography.body,
     color: theme.text_primary,
   },
-  // Filters
-  filtersSection: {
-    paddingBottom: spacing.md,
-  },
-  filtersContent: {
-    paddingHorizontal: spacing.xl,
-    gap: spacing.sm,
-  },
-  categoryChip: {
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm + 2,
+  filterTrigger: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: theme.surface,
-    borderRadius: radii.pill,
+    borderRadius: radii.lg,
     borderWidth: 1.5,
-    borderColor: theme.border_medium,
-    marginRight: spacing.sm,
+    borderColor: colors.indigo200,
+    paddingHorizontal: spacing.md,
+    height: 48,
+    gap: spacing.xs,
+    flexShrink: 0,
+    ...elevation.sm,
   },
-  categoryChipActive: {
-    backgroundColor: theme.accent,
-    borderColor: theme.accent,
-  },
-  categoryChipText: {
-    ...typography.caption,
-    fontWeight: '600',
+  filterTriggerLabel: {
+    ...typography.bodySmall,
     color: theme.text_secondary,
-    textTransform: 'capitalize',
+    fontWeight: '600',
   },
-  categoryChipTextActive: {
-    color: theme.surface,
+  filterModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(7, 11, 28, 0.2)',
+    justifyContent: 'flex-start',
+    paddingTop: spacing.large,
+    paddingHorizontal: spacing.xl,
+  },
+  filterModalCard: {
+    alignSelf: 'flex-end',
+    width: 180,
+    backgroundColor: theme.surface,
+    borderRadius: radii.xl,
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.sm,
+    borderWidth: 1,
+    borderColor: colors.indigo100,
+    gap: spacing.xs,
+  },
+  filterOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderRadius: radii.lg,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+  },
+  filterOptionActive: {
+    backgroundColor: colors.indigo50,
+  },
+  filterOptionText: {
+    ...typography.bodySmall,
+    color: theme.text_secondary,
+  },
+  filterOptionTextActive: {
+    color: colors.indigo600,
+    fontWeight: '600',
+  },
+  filterOptionIcon: {
+    marginLeft: spacing.sm,
   },
   // Mosaic Grid
   list: {

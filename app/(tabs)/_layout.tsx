@@ -5,132 +5,143 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Home, Shirt, Plus, Settings, Sparkles } from 'lucide-react-native';
 import { theme, spacing, radii, elevation, colors } from '@/lib/styles/tokens';
 import { BlurView } from 'expo-blur';
-import MaskedView from '@react-native-masked-view/masked-view';
 
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
 
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: true,
-        headerStyle: {
-          backgroundColor: theme.surface,
-          ...elevation.sm,
-        },
-        headerTintColor: theme.text_primary,
-        headerTitleStyle: {
-          fontSize: 22,
-          fontWeight: '700',
-        },
-        headerShadowVisible: false,
-        tabBarStyle: {
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          backgroundColor: 'rgba(255, 255, 255, 0.8)', // bg-white/80 in Figma
-          borderTopWidth: 2,
-          borderTopColor: colors.indigo100,
-          paddingBottom: insets.bottom + spacing.sm,
-          paddingTop: spacing.md,
-          paddingHorizontal: spacing.md, // Increased for better spacing
-          height: 80 + insets.bottom, // Increased height to accommodate labels
-          ...elevation.xl,
-        },
-        tabBarBackground: () =>
-          Platform.OS !== 'web' ? (
-            <BlurView
-              intensity={80}
-              tint="light"
-              style={StyleSheet.absoluteFill}
-            />
-          ) : null,
-        tabBarActiveTintColor: colors.white,
-        tabBarInactiveTintColor: colors.darkGray, // gray-600 to match Figma
-        tabBarShowLabel: false,
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          headerShown: false,
-          tabBarIcon: ({ focused }) => (
-            <TabIcon
-              icon={
-                <Home
-                  size={24}
-                  color={focused ? colors.white : colors.darkGray}
-                  strokeWidth={2}
+    <View style={styles.appContainer}>
+      <LinearGradient
+        colors={[colors.indigo600, colors.sky500, colors.indigo600]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={styles.topGradientLine}
+        pointerEvents="none"
+      />
+      <View style={[styles.tabsWrapper, { paddingTop: insets.top }]}>
+        <Tabs
+          sceneContainerStyle={styles.sceneContainer}
+          screenOptions={{
+            headerShown: false,
+            headerStyle: {
+              backgroundColor: theme.surface,
+              ...elevation.sm,
+            },
+            headerTintColor: theme.text_primary,
+            headerTitleStyle: {
+              fontSize: 22,
+              fontWeight: '700',
+            },
+            headerShadowVisible: false,
+            tabBarStyle: {
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              backgroundColor: 'rgba(255, 255, 255, 0.8)', // bg-white/80 in Figma
+              borderTopWidth: 2,
+              borderTopColor: colors.indigo100,
+              paddingBottom: insets.bottom + spacing.sm,
+              paddingTop: spacing.md,
+              paddingHorizontal: spacing.md, // Increased for better spacing
+              height: 80 + insets.bottom, // Increased height to accommodate labels
+              ...elevation.xl,
+            },
+            tabBarBackground: () =>
+              Platform.OS !== 'web' ? (
+                <BlurView
+                  intensity={80}
+                  tint="light"
+                  style={StyleSheet.absoluteFill}
                 />
-              }
-              label="Home"
-              focused={focused}
-              showSparkle={focused}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="wardrobe"
-        options={{
-          title: 'Closet',
-          headerTitle: 'My Wardrobe',
-          tabBarIcon: ({ focused }) => (
-            <TabIcon
-              icon={
-                <Shirt
-                  size={24}
-                  color={focused ? colors.white : colors.darkGray}
-                  strokeWidth={2}
+              ) : null,
+            tabBarActiveTintColor: colors.white,
+            tabBarInactiveTintColor: colors.darkGray, // gray-600 to match Figma
+            tabBarShowLabel: false,
+          }}
+        >
+          <Tabs.Screen
+            name="index"
+            options={{
+              title: 'Home',
+              headerShown: false,
+              tabBarIcon: ({ focused }) => (
+                <TabIcon
+                  icon={
+                    <Home
+                      size={24}
+                      color={focused ? colors.white : colors.darkGray}
+                      strokeWidth={2}
+                    />
+                  }
+                  label="Home"
+                  focused={focused}
+                  showSparkle={focused}
                 />
-              }
-              label="Closet"
-              focused={focused}
-              showSparkle={focused}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="preferences"
-        options={{
-          title: 'Add',
-          headerTitle: 'Add Item',
-          href: '/item/new',
-          tabBarIcon: ({ focused }) => (
-            <TabIcon
-              icon={<Plus size={20} color={colors.white} strokeWidth={2.5} />}
-              label="Add"
-              focused={focused}
-              isAddButton
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: 'Profile',
-          headerTitle: 'Preferences',
-          tabBarIcon: ({ focused }) => (
-            <TabIcon
-              icon={
-                <Settings
-                  size={24}
-                  color={focused ? colors.white : colors.darkGray}
-                  strokeWidth={2}
+              ),
+            }}
+          />
+          <Tabs.Screen
+            name="wardrobe"
+            options={{
+              title: 'Closet',
+              headerShown: false,
+              tabBarIcon: ({ focused }) => (
+                <TabIcon
+                  icon={
+                    <Shirt
+                      size={24}
+                      color={focused ? colors.white : colors.darkGray}
+                      strokeWidth={2}
+                    />
+                  }
+                  label="Closet"
+                  focused={focused}
+                  showSparkle={focused}
                 />
-              }
-              label="Profile"
-              focused={focused}
-              showSparkle={focused}
-            />
-          ),
-        }}
-      />
-    </Tabs>
+              ),
+            }}
+          />
+          <Tabs.Screen
+            name="preferences"
+            options={{
+              title: 'Add',
+              headerTitle: 'Add Item',
+              href: '/item/new',
+              tabBarIcon: ({ focused }) => (
+                <TabIcon
+                  icon={<Plus size={20} color={colors.white} strokeWidth={2.5} />}
+                  label="Add"
+                  focused={focused}
+                  isAddButton
+                />
+              ),
+            }}
+          />
+          <Tabs.Screen
+            name="settings"
+            options={{
+              title: 'Profile',
+              headerTitle: 'Preferences',
+              tabBarIcon: ({ focused }) => (
+                <TabIcon
+                  icon={
+                    <Settings
+                      size={24}
+                      color={focused ? colors.white : colors.darkGray}
+                      strokeWidth={2}
+                    />
+                  }
+                  label="Profile"
+                  focused={focused}
+                  showSparkle={focused}
+                />
+              ),
+            }}
+          />
+        </Tabs>
+      </View>
+    </View>
   );
 }
 
@@ -240,6 +251,24 @@ function TabIcon({
 }
 
 const styles = StyleSheet.create({
+  appContainer: {
+    flex: 1,
+    backgroundColor: theme.background,
+  },
+  topGradientLine: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 4,
+    zIndex: 10,
+  },
+  tabsWrapper: {
+    flex: 1,
+  },
+  sceneContainer: {
+    backgroundColor: theme.background,
+  },
   tabButton: {
     position: 'absolute',
     flex: 1, // Ensure equal distribution of space

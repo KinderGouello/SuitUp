@@ -10,7 +10,6 @@ import {
   Image,
 } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Location from 'expo-location';
 import { Button } from '@/components/Button';
 import { WeatherBadge } from '@/components/WeatherBadge';
@@ -45,7 +44,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const { items, loadItems } = useWardrobe();
   const { preferences, loadPreferences } = usePreferences();
   const { settings, loadSettings } = useSettings();
@@ -297,17 +295,9 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Decorative gradient line at the very top of the screen */}
-      <LinearGradient
-        colors={[colors.indigo600, colors.sky500, colors.indigo600]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={styles.topGradientLine}
-      />
-
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[styles.content, { paddingTop: insets.top }]}
+        contentContainerStyle={styles.content}
       >
         {/* Brand Header with Gradient */}
         <BrandHeader showTagline />
@@ -433,14 +423,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.background,
-  },
-  topGradientLine: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 4,
-    zIndex: 1000,
   },
   scrollView: {
     flex: 1,
