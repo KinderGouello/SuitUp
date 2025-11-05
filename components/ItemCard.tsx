@@ -1,6 +1,8 @@
 import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Eye } from 'lucide-react-native';
 import { Item } from '@/lib/types';
-import { theme, radii, elevation, typography, spacing, opacity, colors } from '@/lib/styles/tokens';
+import { theme, radii, elevation, typography, spacing, colors } from '@/lib/styles/tokens';
 
 interface ItemCardProps {
   item: Item;
@@ -8,74 +10,90 @@ interface ItemCardProps {
 }
 
 export function ItemCard({ item, onPress }: ItemCardProps) {
-  // Format season display
-  const formatSeasons = (seasons: string[]) => {
-    if (!seasons || seasons.length === 0) return 'All Season';
-    if (seasons.length === 4) return 'All Season';
-    return seasons.map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(', ');
+  const formatCategory = () => {
+    const label = item.category.charAt(0).toUpperCase() + item.category.slice(1);
+    return label;
   };
 
-  // Format color display
   const formatColor = () => {
     if (!item.colors || item.colors.length === 0) return null;
     if (item.colors.length === 1) {
-      // Simple color name if possible, otherwise hex
       return item.colors[0];
     }
     return `${item.colors.length} colors`;
   };
 
-  return (
-    <Pressable
-      onPress={onPress}
-      style={({ pressed }) => [
-        styles.container,
-        pressed && styles.containerPressed,
-      ]}
-    >
-      <View style={styles.imageContainer}>
-        <Image
-          source={{ uri: item.photoUri }}
-          style={styles.image}
-          resizeMode="cover"
-        />
+  const formatSeason = () => {
+    if (!item.seasons || item.seasons.length === 0) {
+      return 'All Season';
+    }
+    if (item.seasons.length === 4) {
+      return 'All Season';
+    }
+    const [firstSeason] = item.seasons;
+    return firstSeason.charAt(0).toUpperCase() + firstSeason.slice(1);
+  };
 
-        {/* Badges Overlay */}
-        <View style={styles.badgesContainer}>
-          {/* Category Badge */}
-          <View style={styles.categoryBadge}>
-            <Text style={styles.categoryBadgeText}>
-              {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
-            </Text>
+  return (
+    <Pressable onPress={onPress} style={styles.pressable}>
+      {({ pressed }) => (
+        <View style={[styles.container, pressed && styles.containerPressed]}>
+          <View style={styles.imageContainer}>
+            <Image
+              source={{ uri: item.photoUri }}
+              style={styles.image}
+              resizeMode="cover"
+            />
+            <LinearGradient
+              colors={['rgba(12, 15, 36, 0.65)', 'rgba(12, 15, 36, 0.0)']}
+              start={{ x: 0.5, y: 1 }}
+              end={{ x: 0.5, y: 0 }}
+              style={[
+                styles.imageOverlay,
+                pressed && styles.imageOverlayVisible,
+              ]}
+              pointerEvents="none"
+            >
+              <View style={styles.overlayContent}>
+                <Eye size={14} color={colors.white} strokeWidth={2} />
+                <Text style={styles.overlayText}>View Details</Text>
+              </View>
+            </LinearGradient>
           </View>
 
-          {/* Season Badge */}
-          <View style={styles.seasonBadge}>
-            <Text style={styles.seasonBadgeText}>
-              {formatSeasons(item.seasons)}
+          <View style={styles.content}>
+            <View style={styles.badgeRow}>
+              <View style={[styles.badge, styles.badgePrimary]}>
+                <Text style={[styles.badgeText, styles.badgePrimaryText]}>
+                  {formatCategory()}
+                </Text>
+              </View>
+              <View style={[styles.badge, styles.badgeOutline]}>
+                <Text style={[styles.badgeText, styles.badgeOutlineText]}>
+                  {formatSeason()}
+                </Text>
+              </View>
+            </View>
+
+            <Text style={styles.name} numberOfLines={1}>
+              {item.name}
             </Text>
+            {formatColor() && (
+              <Text style={styles.colorText} numberOfLines={1}>
+                {formatColor()}
+              </Text>
+            )}
           </View>
         </View>
-
-        {/* Hover/Press Overlay - "View Details" */}
-        {/* This will be visible on press in React Native */}
-      </View>
-
-      <View style={styles.content}>
-        <Text style={styles.name} numberOfLines={1}>
-          {item.name}
-        </Text>
-        {formatColor() && (
-          <Text style={styles.colorText} numberOfLines={1}>
-            {formatColor()}
-          </Text>
-        )}
-      </View>
+      )}
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
+  pressable: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: theme.surface,
@@ -84,11 +102,13 @@ const styles = StyleSheet.create({
     borderColor: colors.indigo50,
     overflow: 'hidden',
     ...elevation.sm,
+    shadowColor: colors.indigo200,
   },
   containerPressed: {
     borderColor: colors.indigo200,
     transform: [{ translateY: -4 }],
     ...elevation.md,
+    shadowColor: colors.indigo300,
   },
   imageContainer: {
     width: '100%',
@@ -100,43 +120,71 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  badgesContainer: {
+  imageOverlay: {
     position: 'absolute',
-    top: spacing.sm,
-    left: spacing.sm,
-    right: spacing.sm,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    top: 0,
+    opacity: 0,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingBottom: spacing.md,
+  },
+  imageOverlayVisible: {
+    opacity: 1,
+  },
+  overlayContent: {
     flexDirection: 'row',
+    alignItems: 'center',
     gap: spacing.xs,
-    flexWrap: 'wrap',
-  },
-  categoryBadge: {
-    backgroundColor: colors.indigo100,
-    paddingHorizontal: spacing.sm,
+    backgroundColor: 'rgba(15, 23, 42, 0.35)',
+    paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
-    borderRadius: radii.sm,
+    borderRadius: radii.pill,
   },
-  categoryBadgeText: {
+  overlayText: {
     ...typography.micro,
-    color: colors.indigo700,
+    color: colors.white,
     fontWeight: '600',
-    textTransform: 'capitalize',
-  },
-  seasonBadge: {
-    backgroundColor: 'transparent',
-    borderWidth: 1.5,
-    borderColor: colors.indigo200,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: radii.sm,
-  },
-  seasonBadgeText: {
-    ...typography.micro,
-    color: colors.indigo700,
-    fontWeight: '500',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   content: {
     padding: spacing.md,
     gap: spacing.xs,
+  },
+  badgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    marginBottom: spacing.xs,
+  },
+  badge: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radii.pill,
+  },
+  badgePrimary: {
+    backgroundColor: '#f3e8ff',
+    borderWidth: 1,
+    borderColor: '#e9d5ff',
+  },
+  badgePrimaryText: {
+    color: '#7e22ce',
+    fontWeight: '600',
+  },
+  badgeOutline: {
+    borderWidth: 1,
+    borderColor: '#fbcfe8',
+    backgroundColor: colors.white,
+  },
+  badgeOutlineText: {
+    color: '#be185d',
+    fontWeight: '500',
+  },
+  badgeText: {
+    ...typography.micro,
   },
   name: {
     ...typography.bodySmall,

@@ -25,6 +25,9 @@ export interface Item {
   waterproof?: boolean;
   windproof?: boolean;
   tags?: string[];
+  seasons?: string[];
+  formalLevel?: number;
+  cost?: number;
   lastWorn?: number;
   archived?: boolean;
 }
