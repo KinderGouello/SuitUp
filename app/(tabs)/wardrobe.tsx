@@ -12,8 +12,11 @@ import { useRouter } from 'expo-router';
 import { ItemCard } from '@/components/ItemCard';
 import { Button } from '@/components/Button';
 import { useWardrobe } from '@/state/useWardrobe';
-import { Plus, Search, Filter } from 'lucide-react-native';
+import { Plus, Search, Filter, Sparkles } from 'lucide-react-native';
 import { Category } from '@/lib/types';
+import { theme, typography, spacing, radii, elevation, colors } from '@/lib/styles/tokens';
+import { LinearGradient } from 'expo-linear-gradient';
+import MaskedView from '@react-native-masked-view/masked-view';
 
 export default function WardrobeScreen() {
   const router = useRouter();
@@ -56,33 +59,55 @@ export default function WardrobeScreen() {
   if (loading && items.length === 0) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#0ea5e9" />
+        <ActivityIndicator size="large" color={theme.accent} />
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
+      {/* Header with Gradient Title */}
       <View style={styles.header}>
-        <View style={styles.searchBar}>
-          <Search size={20} color="#737373" />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search items..."
-            value={searchQuery}
-            onChangeText={handleSearch}
-            placeholderTextColor="#a3a3a3"
-          />
+        <View style={styles.headerText}>
+          <MaskedView
+            maskElement={
+              <Text style={styles.titleMask}>My Collection</Text>
+            }
+          >
+            <LinearGradient
+              colors={[colors.indigo600, colors.sky500]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.gradientTitle}
+            >
+              <Text style={[styles.titleMask, { opacity: 0 }]}>My Collection</Text>
+            </LinearGradient>
+          </MaskedView>
+          <View style={styles.subtitleContainer}>
+            <Sparkles size={12} color={colors.indigo500} />
+            <Text style={styles.subtitle}>
+              {filteredItems.length} amazing pieces
+            </Text>
+          </View>
         </View>
-        <Pressable
-          style={styles.addButton}
-          onPress={() => router.push('/item/new')}
-        >
-          <Plus size={24} color="#FFFFFF" />
-        </Pressable>
       </View>
 
-      <View style={styles.filters}>
+      {/* Search Bar */}
+      <View style={styles.searchContainer}>
+        <View style={styles.searchBar}>
+          <Search size={20} color={colors.indigo400} strokeWidth={2} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search your style..."
+            value={searchQuery}
+            onChangeText={handleSearch}
+            placeholderTextColor={theme.text_muted}
+          />
+        </View>
+      </View>
+
+      {/* Category Filters */}
+      <View style={styles.filtersSection}>
         <FlatList
           horizontal
           data={categories}
@@ -101,7 +126,7 @@ export default function WardrobeScreen() {
                   selectedCategory === item && styles.categoryChipTextActive,
                 ]}
               >
-                {item === 'all' ? 'All' : item}
+                {item === 'all' ? 'All Items' : item}
               </Text>
             </Pressable>
           )}
@@ -127,10 +152,12 @@ export default function WardrobeScreen() {
           data={filteredItems}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <ItemCard
-              item={item}
-              onPress={() => router.push(`/item/${item.id}`)}
-            />
+            <View style={styles.itemWrapper}>
+              <ItemCard
+                item={item}
+                onPress={() => router.push(`/item/${item.id}`)}
+              />
+            </View>
           )}
           numColumns={2}
           columnWrapperStyle={styles.row}
@@ -144,90 +171,122 @@ export default function WardrobeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.background,
   },
   centered: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: theme.background,
   },
+  // Header Styles
   header: {
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.md,
     flexDirection: 'row',
-    padding: 16,
-    gap: 12,
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
-  searchBar: {
-    flex: 1,
+  headerText: {
+    gap: spacing.xs,
+  },
+  titleMask: {
+    ...typography.h1,
+    fontSize: 28,
+    fontWeight: '700',
+  },
+  gradientTitle: {
+    paddingVertical: 2,
+  },
+  subtitleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    gap: 8,
+    gap: spacing.xs,
+  },
+  subtitle: {
+    ...typography.bodySmall,
+    color: theme.text_tertiary,
+  },
+  // Search Bar
+  searchContainer: {
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.lg,
+  },
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: theme.surface,
+    borderRadius: radii.lg,
+    paddingHorizontal: spacing.lg,
+    height: 48,
+    gap: spacing.sm,
+    borderWidth: 1.5,
+    borderColor: colors.indigo200,
   },
   searchInput: {
     flex: 1,
-    height: 48,
-    fontSize: 16,
-    color: '#171717',
+    ...typography.body,
+    color: theme.text_primary,
   },
-  addButton: {
-    width: 48,
-    height: 48,
-    backgroundColor: '#0ea5e9',
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  filters: {
-    paddingVertical: 8,
+  // Filters
+  filtersSection: {
+    paddingBottom: spacing.md,
   },
   filtersContent: {
-    paddingHorizontal: 16,
-    gap: 8,
+    paddingHorizontal: spacing.xl,
+    gap: spacing.sm,
   },
   categoryChip: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 20,
-    marginRight: 8,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm + 2,
+    backgroundColor: theme.surface,
+    borderRadius: radii.pill,
+    borderWidth: 1.5,
+    borderColor: theme.border_medium,
+    marginRight: spacing.sm,
   },
   categoryChipActive: {
-    backgroundColor: '#0ea5e9',
+    backgroundColor: theme.accent,
+    borderColor: theme.accent,
   },
   categoryChipText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#404040',
+    ...typography.caption,
+    fontWeight: '600',
+    color: theme.text_secondary,
     textTransform: 'capitalize',
   },
   categoryChipTextActive: {
-    color: '#FFFFFF',
+    color: theme.surface,
   },
+  // Mosaic Grid
   list: {
-    padding: 16,
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.xxl,
   },
   row: {
-    gap: 16,
-    marginBottom: 16,
+    gap: spacing.lg,
+    marginBottom: spacing.lg,
   },
+  itemWrapper: {
+    flex: 1,
+  },
+  // Empty State
   emptyState: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 32,
-    gap: 12,
+    padding: spacing.jumbo,
+    gap: spacing.lg,
   },
   emptyTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#171717',
+    ...typography.h1,
+    color: theme.text_primary,
   },
   emptyText: {
-    fontSize: 16,
-    color: '#737373',
+    ...typography.body,
+    color: theme.text_secondary,
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: spacing.md,
   },
 });

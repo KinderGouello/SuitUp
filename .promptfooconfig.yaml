@@ -1,0 +1,144 @@
+# Promptfoo Configuration for SuitUp AI Prompts
+# Run tests with: npx promptfoo eval
+
+description: 'SuitUp outfit recommendation prompt evaluation'
+
+# Define prompts to test
+prompts:
+  - file://prompts/outfit-recommendation.txt
+  - file://prompts/outfit-recommendation-v2.txt
+
+# Define providers (LLM models to test against)
+providers:
+  # OpenAI GPT-4
+  - id: openai:gpt-4-turbo-preview
+    config:
+      temperature: 0.7
+      max_tokens: 1000
+
+  # OpenAI GPT-3.5
+  - id: openai:gpt-3.5-turbo
+    config:
+      temperature: 0.7
+      max_tokens: 1000
+
+  # Anthropic Claude
+  - id: anthropic:claude-3-opus-20240229
+    config:
+      temperature: 0.7
+      max_tokens: 1000
+
+  # For comparison: our heuristic algorithm (custom provider)
+  # - id: file://lib/ai/heuristics.ts:recommendOutfit
+
+# Test cases
+tests:
+  # Sunny summer day
+  - vars:
+      weather_temp: 28
+      weather_precipitation: 0
+      weather_wind: 10
+      weather_description: 'sunny'
+      style_preference: 'casual'
+      available_items: |
+        - White cotton t-shirt
+        - Blue denim jeans
+        - Black sneakers
+        - Sunglasses
+        - Light cardigan
+    assert:
+      - type: contains
+        value: 't-shirt'
+      - type: contains
+        value: 'jeans'
+      - type: not-contains
+        value: 'jacket'
+      - type: not-contains
+        value: 'coat'
+
+  # Rainy cold day
+  - vars:
+      weather_temp: 8
+      weather_precipitation: 5
+      weather_wind: 20
+      weather_description: 'rainy'
+      style_preference: 'professional'
+      available_items: |
+        - Waterproof trench coat
+        - Wool sweater
+        - Dark slacks
+        - Leather boots
+        - Umbrella
+        - Scarf
+    assert:
+      - type: contains
+        value: 'coat'
+      - type: contains-any
+        values: ['waterproof', 'trench', 'rain']
+      - type: contains
+        value: 'boots'
+      - type: not-contains
+        value: 'sandals'
+
+  # Business meeting
+  - vars:
+      weather_temp: 20
+      weather_precipitation: 0
+      weather_wind: 5
+      weather_description: 'partly cloudy'
+      style_preference: 'professional'
+      dress_code: 'business formal'
+      available_items: |
+        - Navy suit jacket
+        - White dress shirt
+        - Gray dress pants
+        - Black oxford shoes
+        - Silk tie
+        - Leather belt
+    assert:
+      - type: contains-any
+        values: ['suit', 'jacket', 'blazer']
+      - type: contains
+        value: 'dress'
+      - type: not-contains
+        value: 'jeans'
+      - type: not-contains
+        value: 'sneakers'
+
+  # Gym/Athletic
+  - vars:
+      weather_temp: 24
+      weather_precipitation: 0
+      weather_wind: 8
+      weather_description: 'clear'
+      style_preference: 'athletic'
+      activity: 'gym workout'
+      available_items: |
+        - Moisture-wicking t-shirt
+        - Athletic shorts
+        - Running shoes
+        - Sports bra
+        - Gym bag
+        - Water bottle
+    assert:
+      - type: contains-any
+        values: ['athletic', 'sports', 'workout', 'gym']
+      - type: contains
+        value: 'shoes'
+      - type: javascript
+        value: 'output.toLowerCase().includes("moisture") || output.toLowerCase().includes("breathable")'
+
+# Default test configuration
+defaultTest:
+  options:
+    # Transform variables into a structured prompt
+    transformVars:
+      weather: '{{weather_description}} with {{weather_temp}}°C, {{weather_precipitation}}mm rain, {{weather_wind}} kph wind'
+      context: 'Style preference: {{style_preference}}. Available items: {{available_items}}'
+
+# Output configuration
+outputPath: ./promptfoo-results.json
+
+# Sharing and caching
+sharing: false
+cache: true

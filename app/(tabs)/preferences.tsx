@@ -11,14 +11,23 @@ import {
 import { usePreferences } from '@/state/usePreferences';
 import { Button } from '@/components/Button';
 import { Preferences, StylePreference, Fit, DressCode } from '@/lib/types';
-import { ChevronDown } from 'lucide-react-native';
-import { theme, spacing, radii, typography, elevation } from '@/lib/styles/tokens';
+import { ChevronDown, User, Crown } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import {
+  theme,
+  spacing,
+  radii,
+  typography,
+  elevation,
+  colors,
+} from '@/lib/styles/tokens';
 
 export default function PreferencesScreen() {
   const { preferences, loading, loadPreferences, savePreferences } =
     usePreferences();
 
-  const [stylePreference, setStylePreference] = useState<StylePreference>('casual');
+  const [stylePreference, setStylePreference] =
+    useState<StylePreference>('casual');
   const [showStyleDropdown, setShowStyleDropdown] = useState(false);
   const [fit, setFit] = useState<Fit>('regular');
   const [showFitDropdown, setShowFitDropdown] = useState(false);
@@ -92,6 +101,31 @@ export default function PreferencesScreen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      {/* Profile Header Card with Gradient */}
+      <View style={styles.profileCardContainer}>
+        <LinearGradient
+          colors={[colors.indigo600, colors.sky500]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.profileGradient}
+        >
+          <View style={styles.profileContent}>
+            <View style={styles.avatarContainer}>
+              <View style={styles.avatar}>
+                <User size={32} color={colors.white} strokeWidth={2} />
+              </View>
+              <View style={styles.crownBadge}>
+                <Crown size={16} color={colors.white} fill={colors.white} />
+              </View>
+            </View>
+            <View style={styles.profileInfo}>
+              <Text style={styles.profileName}>Style Profile</Text>
+              <Text style={styles.profileSubtitle}>Customize your preferences</Text>
+            </View>
+          </View>
+        </LinearGradient>
+      </View>
+
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Style Preference</Text>
         <Text style={styles.sectionDescription}>
@@ -112,7 +146,8 @@ export default function PreferencesScreen() {
                 key={option.value}
                 style={[
                   styles.dropdownItem,
-                  stylePreference === option.value && styles.dropdownItemSelected,
+                  stylePreference === option.value &&
+                    styles.dropdownItemSelected,
                 ]}
                 onPress={() => {
                   setStylePreference(option.value);
@@ -122,7 +157,8 @@ export default function PreferencesScreen() {
                 <Text
                   style={[
                     styles.dropdownItemText,
-                    stylePreference === option.value && styles.dropdownItemTextSelected,
+                    stylePreference === option.value &&
+                      styles.dropdownItemTextSelected,
                   ]}
                 >
                   {option.label}
@@ -193,7 +229,9 @@ export default function PreferencesScreen() {
               key={code.value}
               title={code.label}
               onPress={() => toggleDressCode(code.value)}
-              variant={dressCodes.includes(code.value) ? 'primary' : 'secondary'}
+              variant={
+                dressCodes.includes(code.value) ? 'primary' : 'secondary'
+              }
               size="sm"
             />
           ))}
@@ -201,7 +239,13 @@ export default function PreferencesScreen() {
       </View>
 
       <View style={styles.actions}>
-        <Button title="Save Preferences" onPress={handleSave} size="lg" />
+        <Button
+          title="Save Preferences"
+          onPress={handleSave}
+          size="lg"
+          variant="gradient"
+          fullWidth
+        />
       </View>
     </ScrollView>
   );
@@ -220,6 +264,55 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  // Profile Card Styles
+  profileCardContainer: {
+    marginBottom: spacing.md,
+  },
+  profileGradient: {
+    borderRadius: radii.lg,
+    padding: spacing.xl,
+    ...elevation.md,
+  },
+  profileContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.lg,
+  },
+  avatarContainer: {
+    position: 'relative',
+  },
+  avatar: {
+    width: 72,
+    height: 72,
+    borderRadius: radii.full,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: colors.white,
+  },
+  crownBadge: {
+    position: 'absolute',
+    bottom: -4,
+    right: -4,
+    backgroundColor: colors.indigo600,
+    borderRadius: radii.full,
+    padding: spacing.xs,
+    borderWidth: 2,
+    borderColor: colors.white,
+  },
+  profileInfo: {
+    flex: 1,
+  },
+  profileName: {
+    ...typography.h1,
+    color: colors.white,
+    marginBottom: spacing.xs,
+  },
+  profileSubtitle: {
+    ...typography.bodySmall,
+    color: 'rgba(255, 255, 255, 0.9)',
   },
   section: {
     gap: spacing.small,

@@ -1,6 +1,6 @@
 import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
 import { Outfit, Item } from '@/lib/types';
-import { shadows } from '@/lib/styles/tokens';
+import { theme, radii, elevation, typography, spacing, opacity } from '@/lib/styles/tokens';
 
 interface OutfitCardProps {
   outfit: Outfit;
@@ -20,77 +20,92 @@ export function OutfitCard({ outfit, items, onPress }: OutfitCardProps) {
       onPress={onPress}
       style={({ pressed }) => [
         styles.container,
-        pressed && styles.pressed,
+        pressed && { opacity: opacity.pressed },
       ]}
     >
-      <View style={styles.images}>
-        {displayItems.map((item, index) => (
-          <Image
-            key={item.id}
-            source={{ uri: item.photoUri }}
-            style={[
-              styles.image,
-              index > 0 && styles.imageOffset,
-            ]}
-          />
-        ))}
-      </View>
-      <View style={styles.content}>
+      <View style={styles.header}>
         <Text style={styles.date}>
-          {new Date(outfit.createdAt).toLocaleDateString()}
+          {new Date(outfit.createdAt).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+          })}
         </Text>
         <Text style={styles.weather}>
-          {outfit.weather.tempC}°C · {outfit.weather.condition}
-        </Text>
-        <Text style={styles.explanation} numberOfLines={2}>
-          {outfit.explanation}
+          {outfit.weather.tempC}° · {outfit.weather.condition}
         </Text>
       </View>
+
+      <View style={styles.images}>
+        {displayItems.map((item, index) => (
+          <View
+            key={item.id}
+            style={[
+              styles.imageWrapper,
+              index > 0 && { marginLeft: -spacing.lg },
+            ]}
+          >
+            <Image
+              source={{ uri: item.photoUri }}
+              style={styles.image}
+              resizeMode="cover"
+            />
+          </View>
+        ))}
+      </View>
+
+      {outfit.explanation && (
+        <Text style={styles.explanation} numberOfLines={3}>
+          {outfit.explanation}
+        </Text>
+      )}
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 16,
-    ...shadows.md,
+    backgroundColor: theme.surface,
+    borderRadius: radii.xl,
+    borderWidth: 1,
+    borderColor: theme.border_subtle,
+    padding: spacing.xl,
+    ...elevation.md,
+    gap: spacing.lg,
   },
-  pressed: {
-    opacity: 0.7,
+  header: {
+    gap: spacing.xs,
+  },
+  date: {
+    ...typography.title,
+    color: theme.text_primary,
+  },
+  weather: {
+    ...typography.caption,
+    color: theme.text_tertiary,
   },
   images: {
     flexDirection: 'row',
-    marginBottom: 12,
-    height: 60,
+    alignItems: 'center',
+    height: 72,
+  },
+  imageWrapper: {
+    width: 72,
+    height: 72,
+    borderRadius: radii.md,
+    backgroundColor: theme.surface_subtle,
+    overflow: 'hidden',
+    borderWidth: 3,
+    borderColor: theme.surface,
+    ...elevation.sm,
   },
   image: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
-    backgroundColor: '#f5f5f5',
-    borderWidth: 2,
-    borderColor: '#FFFFFF',
-  },
-  imageOffset: {
-    marginLeft: -20,
-  },
-  content: {
-    gap: 4,
-  },
-  date: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#171717',
-  },
-  weather: {
-    fontSize: 12,
-    color: '#737373',
+    width: '100%',
+    height: '100%',
   },
   explanation: {
-    fontSize: 14,
-    color: '#404040',
-    lineHeight: 20,
+    ...typography.bodySmall,
+    color: theme.text_secondary,
+    lineHeight: 22,
   },
 });

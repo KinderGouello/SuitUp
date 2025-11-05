@@ -1,56 +1,107 @@
-// Enhanced Design Tokens for Suit up!
-// Fashion-first, speed-optimized wardrobe app
+// Enhanced Design Tokens for SuitUp
+// Modern Gradient Design - Inspired by Figma Make
+// Gender-neutral palette with vibrant indigo and sky gradients
 
 export const colors = {
-  // Wardrobe Neutrals - warm, inviting base
-  ivory: '#FDFBF7',
-  linen: '#F5F3EE',
-  charcoal: '#2C2C2C',
-  slate: '#6B7280',
-  mist: '#E8E6E0',
+  // Primary Palette - Indigo (brand primary)
+  indigo50: '#eef2ff',
+  indigo100: '#e0e7ff',
+  indigo200: '#c7d2fe',
+  indigo300: '#a5b4fc',
+  indigo400: '#818cf8',
+  indigo500: '#6366f1',
+  indigo600: '#4f46e5',    // PRIMARY brand color
+  indigo700: '#4338ca',
+  indigo800: '#3730a3',
+  indigo900: '#312e81',
 
-  // Closet Organization - accent colors
-  midnight: '#1A1A1A',
-  camel: '#C4A47C',
-  sage: '#9CA986',
-  terracotta: '#D4745F',
-  navy: '#2D3E50',
+  // Secondary Palette - Sky (brand secondary)
+  sky50: '#f0f9ff',
+  sky100: '#e0f2fe',
+  sky200: '#bae6fd',
+  sky300: '#7dd3fc',
+  sky400: '#38bdf8',
+  sky500: '#0ea5e9',       // Secondary gradient color
+  sky600: '#0284c7',
+  sky700: '#0369a1',
+  sky800: '#075985',
+  sky900: '#0c4a6e',
+
+  // Accent Palette - Amber
+  amber50: '#fffbeb',
+  amber100: '#fef3c7',
+  amber200: '#fde68a',
+  amber300: '#fcd34d',
+  amber400: '#fbbf24',
+  amber500: '#f59e0b',     // Accent color
+  amber600: '#d97706',
+  amber700: '#b45309',
+  amber800: '#92400e',
+  amber900: '#78350f',
+
+  // Neutral Foundation
+  white: '#FFFFFF',
+  background: '#fafafa',
+  foreground: '#1a1a2e',
+  lightGray: '#f5f5f7',
+  gray: '#6b7280',
+  darkGray: '#4b5563',
+  charcoal: '#1a1a2e',
+
+  // Brand gradient colors (used for gradients)
+  brandPrimary: '#4f46e5',      // Indigo-600
+  brandSecondary: '#0ea5e9',    // Sky-500
+  brandAccent: '#f59e0b',       // Amber-500
 
   // Weather-aware colors
-  weatherCold: '#6BA3D4',
-  weatherWarm: '#F4B860',
-  weatherRain: '#708090',
+  weatherCold: '#0369a1',       // Sky-700
+  weatherWarm: '#f59e0b',       // Amber-500
+  weatherRain: '#0284c7',       // Sky-600
+  weatherSnow: '#38bdf8',       // Sky-400
 
   // Status colors
-  wornRecently: '#E8D4B8',
-  unworn: '#9CA986',
-  favorite: '#D4A574',
+  wornRecently: '#0ea5e9',      // Sky-500
+  unworn: '#6b7280',            // Gray-500
+  favorite: '#4f46e5',          // Indigo-600
+  sustainable: '#10b981',       // Emerald-500
 
-  // Semantic
-  success: '#9CA986',
-  warning: '#D4745F',
-  error: '#C85C5C',
-  info: '#2D3E50',
+  // Semantic (WCAG compliant)
+  success: '#10b981',           // Emerald-500
+  warning: '#f59e0b',           // Amber-500
+  error: '#ef4444',             // Red-500
+  info: '#3b82f6',              // Blue-500
 };
 
-// Current theme mapping (light mode)
+// Modern theme mapping with gradient accents
+// Optimized for vibrant, engaging UI with accessibility
 export const theme = {
-  background: colors.ivory,
-  surface: colors.linen,
-  surface_alt: '#FAFAFA',
-  surface_elevated: '#FFFFFF',
-  text_primary: colors.charcoal,
-  text_secondary: colors.slate,
-  text_tertiary: '#9CA3AF',
-  border_subtle: colors.mist,
-  border_strong: '#D1CEC7',
-  accent: colors.midnight,
-  accent_hover: '#000000',
-  accent_secondary: colors.camel,
-  positive: colors.sage,
-  warning: colors.terracotta,
+  background: colors.background,        // #fafafa
+  surface: colors.white,
+  surface_alt: colors.indigo50,         // Very subtle indigo tint
+  surface_elevated: colors.white,
+  surface_subtle: colors.lightGray,
+
+  // Text colors optimized for accessibility
+  text_primary: colors.foreground,      // #1a1a2e
+  text_secondary: colors.darkGray,      // #4b5563
+  text_tertiary: colors.gray,           // #6b7280
+  text_muted: colors.gray,              // #6b7280
+
+  border_subtle: 'rgba(79, 70, 229, 0.15)',
+  border_medium: 'rgba(79, 70, 229, 0.25)',
+  border_strong: colors.indigo600,
+
+  accent: colors.brandPrimary,          // #4f46e5 (Indigo-600)
+  accent_hover: colors.indigo700,       // Darker on hover
+  accent_light: colors.indigo100,       // Light variant
+  accent_secondary: colors.brandSecondary, // #0ea5e9 (Sky-500)
+  accent_subtle: colors.indigo50,       // Subtle backgrounds
+
+  positive: colors.success,
+  warning: colors.warning,
   danger: colors.error,
-  shadow: 'rgba(44, 44, 44, 0.04)',
+  shadow: 'rgba(79, 70, 229, 0.15)',
+  shadow_soft: 'rgba(79, 70, 229, 0.08)',
 };
 
 // Spacing based on 4px base (more granular)
@@ -70,18 +121,18 @@ export const spacing = {
   jumbo: 48,
 };
 
-// Border radii - softer, warmer
+// Border radii - Refined & minimal
 export const radii = {
-  xs: 6,
+  xs: 4,
   sm: 8,
   md: 12,
   lg: 16,
-  xl: 20,
-  pill: 24,
+  xl: 24,
+  pill: 100,
   full: 9999,
 };
 
-// Elevation - subtle, barely-there shadows
+// Elevation - Soft, modern depth with indigo tint
 export const elevation = {
   none: {
     shadowColor: 'transparent',
@@ -91,112 +142,141 @@ export const elevation = {
     elevation: 0,
   },
   sm: {
-    shadowColor: colors.charcoal,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 8,
+    shadowColor: colors.indigo600,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
     elevation: 2,
   },
   md: {
-    shadowColor: colors.charcoal,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.06,
+    shadowColor: colors.indigo600,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.12,
     shadowRadius: 12,
     elevation: 3,
   },
   lg: {
-    shadowColor: colors.charcoal,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.08,
-    shadowRadius: 16,
+    shadowColor: colors.indigo600,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.15,
+    shadowRadius: 20,
     elevation: 4,
+  },
+  xl: {
+    shadowColor: colors.indigo600,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.20,
+    shadowRadius: 30,
+    elevation: 5,
   },
 };
 
-// Typography - scannable hierarchy
+// Typography - Elegant hierarchy with refined legibility
+// Inspired by luxury editorial and minimal Swiss design
 export const typography = {
   hero: {
-    fontSize: 36,
-    lineHeight: 42,
-    fontWeight: '900' as const,
-    letterSpacing: -0.5,
+    fontSize: 40,
+    lineHeight: 48,
+    fontWeight: '300' as const, // Light weight for elegance
+    letterSpacing: -1,
   },
   displayLg: {
-    fontSize: 34,
-    lineHeight: 40,
-    fontWeight: '700' as const,
-    letterSpacing: -0.5,
+    fontSize: 36,
+    lineHeight: 44,
+    fontWeight: '300' as const,
+    letterSpacing: -0.8,
   },
   displayMd: {
-    fontSize: 28,
-    lineHeight: 34,
-    fontWeight: '700' as const,
-    letterSpacing: -0.25,
+    fontSize: 32,
+    lineHeight: 40,
+    fontWeight: '400' as const, // Regular for refined look
+    letterSpacing: -0.5,
   },
   display: {
     fontSize: 28,
-    lineHeight: 34,
-    fontWeight: '700' as const,
-    letterSpacing: -0.25,
+    lineHeight: 36,
+    fontWeight: '400' as const,
+    letterSpacing: -0.4,
   },
   h1: {
-    fontSize: 22,
-    lineHeight: 28,
-    fontWeight: '700' as const,
+    fontSize: 24,
+    lineHeight: 32,
+    fontWeight: '600' as const, // Semibold for structure
+    letterSpacing: -0.3,
   },
   h2: {
-    fontSize: 18,
-    lineHeight: 24,
-    fontWeight: '700' as const,
+    fontSize: 20,
+    lineHeight: 28,
+    fontWeight: '600' as const,
+    letterSpacing: -0.2,
   },
   title: {
-    fontSize: 22,
-    lineHeight: 28,
-    fontWeight: '700' as const,
+    fontSize: 18,
+    lineHeight: 26,
+    fontWeight: '600' as const,
+    letterSpacing: 0,
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: 16,
     lineHeight: 24,
-    fontWeight: '600' as const,
+    fontWeight: '500' as const, // Medium for subtle hierarchy
+    letterSpacing: 0,
   },
   body: {
     fontSize: 16,
-    lineHeight: 22,
-    fontWeight: '500' as const,
+    lineHeight: 24,
+    fontWeight: '400' as const, // Regular for optimal reading
+    letterSpacing: 0,
   },
-  bodyMuted: {
+  bodyLarge: {
+    fontSize: 18,
+    lineHeight: 28,
+    fontWeight: '400' as const,
+    letterSpacing: 0,
+  },
+  bodySmall: {
     fontSize: 14,
-    lineHeight: 18,
-    fontWeight: '500' as const,
+    lineHeight: 20,
+    fontWeight: '400' as const,
+    letterSpacing: 0,
   },
   caption: {
-    fontSize: 14,
+    fontSize: 13,
     lineHeight: 18,
-    fontWeight: '500' as const,
+    fontWeight: '400' as const,
+    letterSpacing: 0.1,
   },
   micro: {
-    fontSize: 12,
+    fontSize: 11,
     lineHeight: 16,
-    fontWeight: '500' as const,
+    fontWeight: '400' as const,
+    letterSpacing: 0.2,
   },
   overline: {
-    fontSize: 11,
-    lineHeight: 14,
-    fontWeight: '700' as const,
-    letterSpacing: 1.2,
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '600' as const,
+    letterSpacing: 1.5,
     textTransform: 'uppercase' as const,
   },
   label: {
-    fontSize: 11,
-    lineHeight: 14,
-    fontWeight: '700' as const,
-    letterSpacing: 1.2,
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '500' as const,
+    letterSpacing: 0.5,
     textTransform: 'uppercase' as const,
   },
   button: {
-    fontSize: 15,
-    lineHeight: 20,
-    fontWeight: '700' as const,
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: '500' as const,
+    letterSpacing: 0.2,
+  },
+  buttonLarge: {
+    fontSize: 18,
+    lineHeight: 28,
+    fontWeight: '500' as const,
+    letterSpacing: 0.3,
   },
 };
 

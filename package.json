@@ -7,12 +7,16 @@
     "dev": "EXPO_NO_TELEMETRY=1 npx expo start",
     "build:web": "expo export --platform web",
     "lint": "expo lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:prompts": "promptfoo eval",
+    "test:prompts:ui": "promptfoo eval && promptfoo view",
+    "test:prompts:watch": "promptfoo eval --watch"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
     "@lucide/lab": "^0.1.2",
     "@react-native-community/slider": "^5.0.1",
+    "@react-native-masked-view/masked-view": "^0.3.2",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
     "@supabase/supabase-js": "^2.58.0",
@@ -38,6 +42,7 @@
     "expo-symbols": "~1.0.7",
     "expo-system-ui": "~6.0.7",
     "expo-web-browser": "~15.0.7",
+    "langfuse": "^3.38.6",
     "lucide-react-native": "^0.544.0",
     "nativewind": "^4.2.1",
     "react": "19.1.0",
@@ -59,6 +64,7 @@
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@types/react": "~19.1.10",
+    "promptfoo": "^0.119.3",
     "typescript": "~5.9.2"
   }
 }
