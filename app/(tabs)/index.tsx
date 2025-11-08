@@ -16,6 +16,7 @@ import { WeatherBadge } from '@/components/WeatherBadge';
 import { WeatherSetup } from '@/components/WeatherSetup';
 import { TodaysPerfectMatch } from '@/components/TodaysPerfectMatch';
 import { BrandHeader } from '@/components/BrandHeader';
+import { GradientCard } from '@/components/GradientCard';
 import { weatherClient } from '@/lib/weather/client';
 import { recommendOutfit } from '@/lib/ai/heuristics';
 import { useWardrobe } from '@/state/useWardrobe';
@@ -310,20 +311,13 @@ export default function HomeScreen() {
 
         {/* Daily Motivation Card */}
         {items.length > 0 && (
-          <LinearGradient
-            colors={[colors.indigo600, colors.sky500]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.motivationCard}
-          >
-            <View style={styles.motivationIconContainer}>
-              <Zap size={24} color={colors.white} fill={colors.white} />
-            </View>
-            <View style={styles.motivationTextContainer}>
-              <Text style={styles.motivationLabel}>Daily Boost</Text>
-              <Text style={styles.motivationText}>{dailyMotivation}</Text>
-            </View>
-          </LinearGradient>
+          <GradientCard
+            variant="horizontal"
+            icon={<Zap size={24} color={colors.white} fill={colors.white} />}
+            title="Daily Boost"
+            subtitle={dailyMotivation}
+            style={{ marginHorizontal: spacing.xl }}
+          />
         )}
 
         {/* Weather Card */}
@@ -346,18 +340,17 @@ export default function HomeScreen() {
 
         {/* Generate Outfit CTA - Gradient Card */}
         {items.length > 0 && weather && (
-          <LinearGradient
-            colors={[colors.indigo600, colors.sky500]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.ctaGradientCard}
+          <GradientCard
+            variant="horizontal"
+            icon={<Sparkles size={32} color={colors.white} fill={colors.white} />}
+            style={{ marginHorizontal: spacing.xl, ...elevation.lg }}
+            iconContainerStyle={{ width: 64, height: 64, padding: spacing.lg, borderRadius: radii.xl }}
           >
-            <View style={styles.ctaIconContainer}>
-              <Sparkles size={32} color={colors.white} fill={colors.white} />
-            </View>
-            <View style={styles.ctaTextContainer}>
-              <Text style={styles.ctaTitle}>Want a fresh look?</Text>
-              <Text style={styles.ctaSubtitle}>
+            <View style={{ flex: 1, gap: spacing.sm }}>
+              <Text style={{ ...typography.subtitle, color: colors.white, fontWeight: '600' }}>
+                Want a fresh look?
+              </Text>
+              <Text style={{ ...typography.bodySmall, color: 'rgba(255, 255, 255, 0.9)', marginBottom: spacing.xs }}>
                 Generate a new outfit based on today's weather and your style!
               </Text>
               <Pressable
@@ -375,7 +368,7 @@ export default function HomeScreen() {
                 )}
               </Pressable>
             </View>
-          </LinearGradient>
+          </GradientCard>
         )}
 
         {/* Empty State - Always visible when no items */}
@@ -487,66 +480,7 @@ const styles = StyleSheet.create({
     color: theme.text_tertiary,
     textAlign: 'center',
   },
-  // Motivation Card Styles
-  motivationCard: {
-    marginHorizontal: spacing.xl,
-    borderRadius: radii.lg,
-    padding: spacing.lg,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    ...elevation.md,
-  },
-  motivationIconContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: radii.lg,
-    padding: spacing.md,
-  },
-  motivationTextContainer: {
-    flex: 1,
-  },
-  motivationLabel: {
-    ...typography.caption,
-    color: 'rgba(255, 255, 255, 0.9)',
-    marginBottom: spacing.xs,
-  },
-  motivationText: {
-    ...typography.subtitle,
-    color: colors.white,
-    fontWeight: '600',
-  },
-  // CTA Gradient Card Styles
-  ctaGradientCard: {
-    marginHorizontal: spacing.xl,
-    borderRadius: radii.lg,
-    padding: spacing.xl,
-    flexDirection: 'row',
-    gap: spacing.lg,
-    ...elevation.lg,
-  },
-  ctaIconContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: radii.xl,
-    padding: spacing.lg,
-    width: 64,
-    height: 64,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  ctaTextContainer: {
-    flex: 1,
-  },
-  ctaTitle: {
-    ...typography.subtitle,
-    color: colors.white,
-    fontWeight: '600',
-    marginBottom: spacing.xs,
-  },
-  ctaSubtitle: {
-    ...typography.bodySmall,
-    color: 'rgba(255, 255, 255, 0.9)',
-    marginBottom: spacing.md,
-  },
+  // CTA Button Styles (used in gradient card)
   ctaButton: {
     backgroundColor: colors.white,
     borderRadius: radii.md,

@@ -6,29 +6,21 @@ import {
   FlatList,
   TextInput,
   Pressable,
-  Modal,
-  ActivityIndicator,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ItemCard } from '@/components/ItemCard';
-import { Button } from '@/components/Button';
+import { SelectModal } from '@/components/SelectModal';
+import { EmptyState } from '@/components/EmptyState';
+import { LoadingState } from '@/components/LoadingState';
 import { useWardrobe } from '@/state/useWardrobe';
 import {
   Search,
   Sparkles,
   SlidersHorizontal,
   ChevronDown,
-  Check,
 } from 'lucide-react-native';
 import { Category } from '@/lib/types';
-import {
-  theme,
-  typography,
-  spacing,
-  radii,
-  elevation,
-  colors,
-} from '@/lib/styles/tokens';
+import { theme, spacing, radii, elevation, colors } from '@/lib/styles/tokens';
 import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 
@@ -72,11 +64,7 @@ export default function WardrobeScreen() {
       : items.filter((item) => item.category === selectedCategory);
 
   if (loading && items.length === 0) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color={theme.accent} />
-      </View>
-    );
+    return <LoadingState />;
   }
 
   return (
@@ -145,70 +133,21 @@ export default function WardrobeScreen() {
         </View>
       </View>
 
-      <Modal
+      <SelectModal
         visible={isFilterOpen}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setIsFilterOpen(false)}
-      >
-        <View style={styles.filterModalOverlay}>
-          <Pressable
-            style={StyleSheet.absoluteFill}
-            onPress={() => setIsFilterOpen(false)}
-            accessibilityLabel="Dismiss filter menu"
-          />
-          <View style={styles.filterModalCard}>
-            {filterOptions.map((option) => {
-              const isActive = option.value === selectedCategory;
-              return (
-                <Pressable
-                  key={option.value}
-                  onPress={() => {
-                    setSelectedCategory(option.value);
-                    setIsFilterOpen(false);
-                  }}
-                  style={[
-                    styles.filterOption,
-                    isActive && styles.filterOptionActive,
-                  ]}
-                  accessibilityRole="menuitem"
-                  accessibilityState={{ selected: isActive }}
-                >
-                  <Text
-                    style={[
-                      styles.filterOptionText,
-                      isActive && styles.filterOptionTextActive,
-                    ]}
-                  >
-                    {option.label}
-                  </Text>
-                  {isActive && (
-                    <Check
-                      size={16}
-                      color={colors.indigo500}
-                      strokeWidth={2.5}
-                      style={styles.filterOptionIcon}
-                    />
-                  )}
-                </Pressable>
-              );
-            })}
-          </View>
-        </View>
-      </Modal>
+        onClose={() => setIsFilterOpen(false)}
+        options={filterOptions}
+        selectedValue={selectedCategory}
+        onSelect={setSelectedCategory}
+      />
 
       {filteredItems.length === 0 ? (
-        <View style={styles.emptyState}>
-          <Text style={styles.emptyTitle}>No items yet</Text>
-          <Text style={styles.emptyText}>
-            Add your first item to start building your wardrobe.
-          </Text>
-          <Button
-            title="Add Item"
-            onPress={() => router.push('/item/new')}
-            variant="primary"
-          />
-        </View>
+        <EmptyState
+          title="No items yet"
+          description="Add your first item to start building your wardrobe."
+          ctaText="Add Item"
+          onCtaPress={() => router.push('/item/new')}
+        />
       ) : (
         <FlatList
           data={filteredItems}
@@ -233,12 +172,6 @@ export default function WardrobeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.background,
-  },
-  centered: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: theme.background,
   },
   // Header Styles
@@ -316,46 +249,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     flex: 1,
   },
-  filterModalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(7, 11, 28, 0.2)',
-    justifyContent: 'flex-start',
-    paddingTop: spacing.large,
-    paddingHorizontal: spacing.xl,
-  },
-  filterModalCard: {
-    alignSelf: 'flex-end',
-    width: 180,
-    backgroundColor: theme.surface,
-    borderRadius: radii.xl,
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
-    borderWidth: 1,
-    borderColor: colors.indigo100,
-    gap: spacing.xs,
-  },
-  filterOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderRadius: radii.lg,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-  },
-  filterOptionActive: {
-    backgroundColor: colors.indigo50,
-  },
-  filterOptionText: {
-    ...typography.bodySmall,
-    color: theme.text_secondary,
-  },
-  filterOptionTextActive: {
-    color: colors.indigo600,
-    fontWeight: '600',
-  },
-  filterOptionIcon: {
-    marginLeft: spacing.sm,
-  },
   // Mosaic Grid
   list: {
     paddingHorizontal: spacing.lg,
@@ -367,23 +260,5 @@ const styles = StyleSheet.create({
   },
   itemWrapper: {
     flex: 1,
-  },
-  // Empty State
-  emptyState: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: spacing.jumbo,
-    gap: spacing.lg,
-  },
-  emptyTitle: {
-    ...typography.h1,
-    color: theme.text_primary,
-  },
-  emptyText: {
-    ...typography.body,
-    color: theme.text_secondary,
-    textAlign: 'center',
-    marginBottom: spacing.md,
   },
 });

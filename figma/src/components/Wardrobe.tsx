@@ -3,10 +3,6 @@ import { ClothingCard } from "./ClothingCard";
 import { Input } from "./ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Search, SlidersHorizontal, Sparkles } from "lucide-react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "./ui/dialog";
-import { Badge } from "./ui/badge";
-import { Button } from "./ui/button";
-import { ImageWithFallback } from "./figma/ImageWithFallback";
 
 interface ClothingItem {
   id: string;
@@ -22,10 +18,13 @@ interface ClothingItem {
   notes: string;
 }
 
-export function Wardrobe() {
+interface WardrobeProps {
+  onViewItem: (item: ClothingItem) => void;
+}
+
+export function Wardrobe({ onViewItem }: WardrobeProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
-  const [selectedItem, setSelectedItem] = useState<ClothingItem | null>(null);
 
   // Mock wardrobe data
   const wardrobeItems: ClothingItem[] = [
@@ -165,7 +164,7 @@ export function Wardrobe() {
           <ClothingCard
             key={item.id}
             {...item}
-            onClick={() => setSelectedItem(item)}
+            onClick={() => onViewItem(item)}
           />
         ))}
       </div>
@@ -176,91 +175,6 @@ export function Wardrobe() {
           <p className="text-sm text-gray-400">Try adjusting your search or filters</p>
         </div>
       )}
-
-      {/* Item Detail Dialog */}
-      <Dialog open={!!selectedItem} onOpenChange={() => setSelectedItem(null)}>
-        <DialogContent className="max-w-md">
-          {selectedItem && (
-            <>
-              <DialogHeader>
-                <DialogTitle className="text-xl">{selectedItem.name}</DialogTitle>
-                <DialogDescription>Complete item details</DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4">
-                {/* Images */}
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">Item Photo</p>
-                    <div className="aspect-square rounded-2xl overflow-hidden bg-gray-100 ring-2 ring-purple-100">
-                      <ImageWithFallback
-                        src={selectedItem.image}
-                        alt={selectedItem.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">Label Photo</p>
-                    <div className="aspect-square rounded-2xl overflow-hidden bg-gray-100 ring-2 ring-purple-100">
-                      <ImageWithFallback
-                        src={selectedItem.labelImage}
-                        alt={`${selectedItem.name} label`}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Details */}
-                <div className="space-y-3">
-                  <div className="flex gap-2">
-                    <Badge className="bg-purple-100 text-purple-700 border-purple-200">
-                      {selectedItem.category}
-                    </Badge>
-                    <Badge variant="outline" className="border-pink-200 text-pink-700">
-                      {selectedItem.season}
-                    </Badge>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-3 text-sm">
-                    <div>
-                      <p className="text-gray-500 text-xs">Brand</p>
-                      <p>{selectedItem.brand}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500 text-xs">Size</p>
-                      <p>{selectedItem.size}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500 text-xs">Color</p>
-                      <p>{selectedItem.color}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-500 text-xs">Material</p>
-                      <p>{selectedItem.material}</p>
-                    </div>
-                  </div>
-
-                  {selectedItem.notes && (
-                    <div className="bg-indigo-50 p-3 rounded-xl border border-indigo-100">
-                      <p className="text-gray-500 text-xs mb-1">Notes</p>
-                      <p className="text-sm text-gray-700">{selectedItem.notes}</p>
-                    </div>
-                  )}
-                </div>
-
-                <Button 
-                  variant="outline" 
-                  className="w-full border-indigo-200 hover:bg-indigo-50" 
-                  onClick={() => setSelectedItem(null)}
-                >
-                  Close
-                </Button>
-              </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

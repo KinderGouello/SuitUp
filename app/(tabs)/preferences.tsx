@@ -7,14 +7,25 @@ import {
   ActivityIndicator,
   Alert,
   Pressable,
-  Modal,
 } from 'react-native';
 import { usePreferences } from '@/state/usePreferences';
 import { Button } from '@/components/Button';
 import TextInput from '@/components/TextInput';
 import Toggle from '@/components/Toggle';
+import { GradientCard } from '@/components/GradientCard';
+import { SectionCard } from '@/components/SectionCard';
+import { SelectModal } from '@/components/SelectModal';
 import { StylePreference, ColorPalette } from '@/lib/types';
-import { ChevronDown, User, Crown, MapPin, Save, Palette, Sparkles, Bell, Check } from 'lucide-react-native';
+import {
+  ChevronDown,
+  User,
+  Crown,
+  MapPin,
+  Save,
+  Palette,
+  Sparkles,
+  Bell,
+} from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Slider from '@react-native-community/slider';
 import {
@@ -146,220 +157,211 @@ export default function PreferencesScreen() {
   ];
 
   const selectedStyle = styleOptions.find((s) => s.value === stylePreference);
-  const selectedColorPalette = colorPaletteOptions.find((c) => c.value === colorPalette);
+  const selectedColorPalette = colorPaletteOptions.find(
+    (c) => c.value === colorPalette
+  );
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       {/* Profile Header Card with Gradient */}
       <View style={styles.profileCardContainer}>
-        <LinearGradient
-          colors={[colors.indigo600, colors.sky500]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.profileGradient}
-        >
-          <View style={styles.profileContent}>
-            <View style={styles.avatarContainer}>
-              <View style={styles.avatar}>
-                <User size={32} color={colors.white} strokeWidth={2} />
-              </View>
-              <View style={styles.crownBadge}>
-                <Crown size={16} color={colors.white} fill={colors.white} />
-              </View>
+        <GradientCard
+          variant="horizontal"
+          icon={
+            <View style={styles.avatar}>
+              <User size={32} color={colors.white} strokeWidth={2} />
             </View>
-            <View style={styles.profileInfo}>
-              <Text style={styles.profileName}>Style Profile</Text>
-              <Text style={styles.profileSubtitle}>
-                Customize your preferences
-              </Text>
+          }
+          badge={
+            <View
+              style={{
+                width: 20,
+                height: 20,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Crown size={16} color={colors.white} fill={colors.white} />
             </View>
-          </View>
-        </LinearGradient>
+          }
+          title="Style Profile"
+          subtitle="Customize your preferences"
+          titleStyle={{
+            ...typography.h2,
+            color: colors.white,
+            fontWeight: '600',
+          }}
+          subtitleStyle={{
+            ...typography.bodySmall,
+            color: 'rgba(255, 255, 255, 0.9)',
+          }}
+          iconContainerStyle={{ width: 72, height: 72, borderRadius: radii.xl }}
+        />
       </View>
 
       {/* Profile Information Section */}
-      <View style={styles.sectionCard}>
-        <View style={styles.sectionHeader}>
-          <User size={20} color={colors.indigo600} strokeWidth={2} />
-          <Text style={styles.sectionTitle}>Profile Information</Text>
-        </View>
-        <Text style={styles.sectionDescription}>
-          Update your personal details
-        </Text>
-        <View style={styles.sectionContent}>
-          {/* <TextInput
-            placeholder="Enter your name"
-            value={name}
-            onChangeText={setName}
-            autoCapitalize="words"
-          />
-          <TextInput
-            placeholder="Enter your email"
-            value={email}
-            onChangeText={handleEmailChange}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            error={emailError}
-          /> */}
-          <TextInput
-            placeholder="Enter your location"
-            value={location}
-            onChangeText={setLocation}
-            icon={MapPin}
-            iconColor={colors.gray}
-          />
-        </View>
-      </View>
+      <SectionCard
+        title="Profile Information"
+        description="Update your personal details"
+        icon={<User size={20} color={colors.indigo600} strokeWidth={2} />}
+      >
+        {/* <TextInput
+          placeholder="Enter your name"
+          value={name}
+          onChangeText={setName}
+          autoCapitalize="words"
+        />
+        <TextInput
+          placeholder="Enter your email"
+          value={email}
+          onChangeText={handleEmailChange}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          error={emailError}
+        /> */}
+        <TextInput
+          placeholder="Enter your location"
+          value={location}
+          onChangeText={setLocation}
+          icon={MapPin}
+          iconColor={colors.gray}
+        />
+      </SectionCard>
 
       {/* Style Preferences Section */}
-      <View style={styles.sectionCard}>
-        <View style={styles.sectionHeader}>
-          <Palette size={20} color={colors.indigo600} strokeWidth={2} />
-          <Text style={styles.sectionTitle}>Style Preferences</Text>
+      <SectionCard
+        title="Style Preferences"
+        description="Customize your outfit recommendations"
+        icon={<Palette size={20} color={colors.indigo600} strokeWidth={2} />}
+      >
+        {/* Style Preference */}
+        <View style={styles.fieldContainer}>
+          <Text style={styles.fieldLabel}>Style Preference</Text>
+          <Pressable
+            style={styles.selectTrigger}
+            onPress={() => setShowStyleModal(true)}
+            accessibilityRole="button"
+            accessibilityLabel="Select style preference"
+          >
+            <Text style={styles.selectTriggerText}>
+              {selectedStyle?.label || 'Select style'}
+            </Text>
+            <ChevronDown
+              size={20}
+              color={theme.text_secondary}
+              strokeWidth={2}
+            />
+          </Pressable>
         </View>
-        <Text style={styles.sectionDescription}>
-          Customize your outfit recommendations
-        </Text>
-        <View style={styles.sectionContent}>
-          {/* Style Preference */}
-          <View style={styles.fieldContainer}>
-            <Text style={styles.fieldLabel}>Style Preference</Text>
-            <Pressable
-              style={styles.selectTrigger}
-              onPress={() => setShowStyleModal(true)}
-              accessibilityRole="button"
-              accessibilityLabel="Select style preference"
-            >
-              <Text style={styles.selectTriggerText}>
-                {selectedStyle?.label || 'Select style'}
-              </Text>
-              <ChevronDown
-                size={20}
-                color={theme.text_secondary}
-                strokeWidth={2}
-              />
-            </Pressable>
-          </View>
 
-          {/* Color Palette */}
-          <View style={styles.fieldContainer}>
-            <Text style={styles.fieldLabel}>Color Palette</Text>
-            <Pressable
-              style={styles.selectTrigger}
-              onPress={() => setShowColorPaletteModal(true)}
-              accessibilityRole="button"
-              accessibilityLabel="Select color palette"
-            >
-              <Text style={styles.selectTriggerText}>
-                {selectedColorPalette?.label || 'Select palette'}
-              </Text>
-              <ChevronDown
-                size={20}
-                color={theme.text_secondary}
-                strokeWidth={2}
-              />
-            </Pressable>
-          </View>
+        {/* Color Palette */}
+        <View style={styles.fieldContainer}>
+          <Text style={styles.fieldLabel}>Color Palette</Text>
+          <Pressable
+            style={styles.selectTrigger}
+            onPress={() => setShowColorPaletteModal(true)}
+            accessibilityRole="button"
+            accessibilityLabel="Select color palette"
+          >
+            <Text style={styles.selectTriggerText}>
+              {selectedColorPalette?.label || 'Select palette'}
+            </Text>
+            <ChevronDown
+              size={20}
+              color={theme.text_secondary}
+              strokeWidth={2}
+            />
+          </Pressable>
+        </View>
 
-          {/* Formality Level */}
-          <View style={styles.fieldContainer}>
-            <Text style={styles.fieldLabel}>Formality Level</Text>
-            <View style={styles.sliderContainer}>
-              <Text style={styles.sliderLabel}>Casual</Text>
-              <Slider
-                style={styles.slider}
-                minimumValue={1}
-                maximumValue={5}
-                step={1}
-                value={formalityLevel}
-                onValueChange={setFormalityLevel}
-                minimumTrackTintColor={colors.indigo600}
-                maximumTrackTintColor={colors.indigo200}
-                thumbTintColor={colors.indigo600}
-              />
-              <Text style={styles.sliderLabel}>Formal</Text>
-            </View>
-            <View style={styles.formalityBadgeContainer}>
-              <View style={styles.formalityBadge}>
-                <Text style={styles.formalityBadgeText}>
-                  Level {formalityLevel} of 5
-                </Text>
-              </View>
+        {/* Formality Level */}
+        <View style={styles.fieldContainer}>
+          <Text style={styles.fieldLabel}>Formality Level</Text>
+          <View style={styles.sliderContainer}>
+            <Text style={styles.sliderLabel}>Casual</Text>
+            <Slider
+              style={styles.slider}
+              minimumValue={1}
+              maximumValue={5}
+              step={1}
+              value={formalityLevel}
+              onValueChange={setFormalityLevel}
+              minimumTrackTintColor={colors.indigo600}
+              maximumTrackTintColor={colors.indigo200}
+              thumbTintColor={colors.indigo600}
+            />
+            <Text style={styles.sliderLabel}>Formal</Text>
+          </View>
+          <View style={styles.formalityBadgeContainer}>
+            <View style={styles.formalityBadge}>
+              <Text style={styles.formalityBadgeText}>
+                Level {formalityLevel} of 5
+              </Text>
             </View>
           </View>
         </View>
-      </View>
+      </SectionCard>
 
       {/* Outfit Suggestions Section */}
-      <View style={styles.sectionCard}>
-        <View style={styles.sectionHeader}>
-          <Sparkles size={20} color={colors.indigo600} strokeWidth={2} />
-          <Text style={styles.sectionTitle}>Outfit Suggestions</Text>
-        </View>
-        <Text style={styles.sectionDescription}>
-          Customize your daily recommendations
-        </Text>
-        <View style={styles.sectionContent}>
-          <Toggle
-            label="Daily Suggestion"
-            description="Get a fresh outfit recommendation every morning"
-            value={dailySuggestion}
-            onValueChange={setDailySuggestion}
-          />
-          <Toggle
-            label="Weather-Based"
-            description="Match your outfits to the current weather"
-            value={weatherBased}
-            onValueChange={setWeatherBased}
-          />
-          {/* <Toggle
-            label="Occasion-Based"
-            description="Consider your calendar events for outfit selection"
-            value={occasionBased}
-            onValueChange={setOccasionBased}
-          /> */}
-        </View>
-      </View>
+      <SectionCard
+        title="Outfit Suggestions"
+        description="Customize your daily recommendations"
+        icon={<Sparkles size={20} color={colors.indigo600} strokeWidth={2} />}
+      >
+        <Toggle
+          label="Daily Suggestion"
+          description="Get a fresh outfit recommendation every morning"
+          value={dailySuggestion}
+          onValueChange={setDailySuggestion}
+        />
+        <Toggle
+          label="Weather-Based"
+          description="Match your outfits to the current weather"
+          value={weatherBased}
+          onValueChange={setWeatherBased}
+        />
+        {/* <Toggle
+          label="Occasion-Based"
+          description="Consider your calendar events for outfit selection"
+          value={occasionBased}
+          onValueChange={setOccasionBased}
+        /> */}
+      </SectionCard>
 
       {/* Notifications Section */}
-      <View style={styles.sectionCard}>
-        <View style={styles.sectionHeader}>
-          <Bell size={20} color={colors.indigo600} strokeWidth={2} />
-          <Text style={styles.sectionTitle}>Notifications</Text>
-        </View>
-        <Text style={styles.sectionDescription}>
-          Manage your notification preferences
-        </Text>
-        <View style={styles.sectionContent}>
-          <Toggle
-            label="Enable Notifications"
-            description="Receive app notifications"
-            value={enableNotifications}
-            onValueChange={(value) => {
-              setEnableNotifications(value);
-              // Disable child toggles if master is disabled
-              if (!value) {
-                setOutfitReminder(false);
-                setWeatherAlerts(false);
-              }
-            }}
-          />
-          {/* <Toggle
-            label="Outfit Reminder"
-            description="Get notified about your daily outfit"
-            value={outfitReminder}
-            onValueChange={setOutfitReminder}
-            disabled={!enableNotifications}
-          />
-          <Toggle
-            label="Weather Alerts"
-            description="Receive alerts when weather changes"
-            value={weatherAlerts}
-            onValueChange={setWeatherAlerts}
-            disabled={!enableNotifications}
-          /> */}
-        </View>
-      </View>
+      <SectionCard
+        title="Notifications"
+        description="Manage your notification preferences"
+        icon={<Bell size={20} color={colors.indigo600} strokeWidth={2} />}
+      >
+        <Toggle
+          label="Enable Notifications"
+          description="Receive app notifications"
+          value={enableNotifications}
+          onValueChange={(value) => {
+            setEnableNotifications(value);
+            // Disable child toggles if master is disabled
+            if (!value) {
+              setOutfitReminder(false);
+              setWeatherAlerts(false);
+            }
+          }}
+        />
+        {/* <Toggle
+          label="Outfit Reminder"
+          description="Get notified about your daily outfit"
+          value={outfitReminder}
+          onValueChange={setOutfitReminder}
+          disabled={!enableNotifications}
+        />
+        <Toggle
+          label="Weather Alerts"
+          description="Receive alerts when weather changes"
+          value={weatherAlerts}
+          onValueChange={setWeatherAlerts}
+          disabled={!enableNotifications}
+        /> */}
+      </SectionCard>
 
       {/* Save Button */}
       <View style={styles.actions}>
@@ -374,110 +376,22 @@ export default function PreferencesScreen() {
       </View>
 
       {/* Style Preference Modal */}
-      <Modal
+      <SelectModal
         visible={showStyleModal}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowStyleModal(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <Pressable
-            style={StyleSheet.absoluteFill}
-            onPress={() => setShowStyleModal(false)}
-            accessibilityLabel="Dismiss style preference menu"
-          />
-          <View style={styles.modalCard}>
-            {styleOptions.map((option) => {
-              const isActive = option.value === stylePreference;
-              return (
-                <Pressable
-                  key={option.value}
-                  onPress={() => {
-                    setStylePreference(option.value);
-                    setShowStyleModal(false);
-                  }}
-                  style={[
-                    styles.modalOption,
-                    isActive && styles.modalOptionActive,
-                  ]}
-                  accessibilityRole="menuitem"
-                  accessibilityState={{ selected: isActive }}
-                >
-                  <Text
-                    style={[
-                      styles.modalOptionText,
-                      isActive && styles.modalOptionTextActive,
-                    ]}
-                  >
-                    {option.label}
-                  </Text>
-                  {isActive && (
-                    <Check
-                      size={16}
-                      color={colors.indigo600}
-                      strokeWidth={2.5}
-                      style={styles.modalOptionIcon}
-                    />
-                  )}
-                </Pressable>
-              );
-            })}
-          </View>
-        </View>
-      </Modal>
+        onClose={() => setShowStyleModal(false)}
+        options={styleOptions}
+        selectedValue={stylePreference}
+        onSelect={setStylePreference}
+      />
 
       {/* Color Palette Modal */}
-      <Modal
+      <SelectModal
         visible={showColorPaletteModal}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowColorPaletteModal(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <Pressable
-            style={StyleSheet.absoluteFill}
-            onPress={() => setShowColorPaletteModal(false)}
-            accessibilityLabel="Dismiss color palette menu"
-          />
-          <View style={styles.modalCard}>
-            {colorPaletteOptions.map((option) => {
-              const isActive = option.value === colorPalette;
-              return (
-                <Pressable
-                  key={option.value}
-                  onPress={() => {
-                    setColorPalette(option.value);
-                    setShowColorPaletteModal(false);
-                  }}
-                  style={[
-                    styles.modalOption,
-                    isActive && styles.modalOptionActive,
-                  ]}
-                  accessibilityRole="menuitem"
-                  accessibilityState={{ selected: isActive }}
-                >
-                  <Text
-                    style={[
-                      styles.modalOptionText,
-                      isActive && styles.modalOptionTextActive,
-                    ]}
-                  >
-                    {option.label}
-                  </Text>
-                  {isActive && (
-                    <Check
-                      size={16}
-                      color={colors.indigo600}
-                      strokeWidth={2.5}
-                      style={styles.modalOptionIcon}
-                    />
-                  )}
-                </Pressable>
-              );
-            })}
-          </View>
-        </View>
-      </Modal>
+        onClose={() => setShowColorPaletteModal(false)}
+        options={colorPaletteOptions}
+        selectedValue={colorPalette}
+        onSelect={setColorPalette}
+      />
     </ScrollView>
   );
 }
@@ -501,19 +415,6 @@ const styles = StyleSheet.create({
   profileCardContainer: {
     marginBottom: 0, // Gap handled by parent
   },
-  profileGradient: {
-    borderRadius: radii.lg, // 16px per Figma spec
-    padding: spacing.xl, // 24px per Figma spec
-    ...elevation.md,
-  },
-  profileContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.lg,
-  },
-  avatarContainer: {
-    position: 'relative',
-  },
   avatar: {
     width: 72, // 72x72px per Figma spec
     height: 72,
@@ -523,60 +424,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 3, // 3px white border per Figma spec
     borderColor: colors.white,
-  },
-  crownBadge: {
-    position: 'absolute',
-    bottom: -4,
-    right: -4,
-    backgroundColor: colors.indigo600,
-    borderRadius: radii.full,
-    padding: spacing.xs,
-    borderWidth: 2,
-    borderColor: colors.white,
-  },
-  profileInfo: {
-    flex: 1,
-  },
-  profileName: {
-    fontSize: 24, // 24px per Figma spec
-    lineHeight: 32,
-    fontWeight: '600',
-    color: colors.white,
-    marginBottom: spacing.xs,
-  },
-  profileSubtitle: {
-    fontSize: 14, // 14px per Figma spec
-    lineHeight: 20,
-    color: 'rgba(255, 255, 255, 0.9)', // 90% opacity per Figma spec
-  },
-  // Section Card Styles (Figma spec)
-  sectionCard: {
-    backgroundColor: colors.white,
-    borderWidth: 2, // 2px border per Figma spec
-    borderColor: colors.indigo100, // Indigo-100 per Figma spec
-    borderRadius: radii.lg, // 16px per Figma spec
-    padding: spacing.lg, // 16px per Figma spec
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm, // 8px gap per Figma spec (gap-2)
-    marginBottom: spacing.xs,
-  },
-  sectionTitle: {
-    fontSize: 16, // 16px per Figma spec
-    lineHeight: 24,
-    fontWeight: '500',
-    color: theme.text_primary,
-  },
-  sectionDescription: {
-    fontSize: 13, // 13px per Figma spec
-    lineHeight: 18,
-    color: colors.gray, // Gray-600 per Figma spec
-    marginBottom: spacing.md,
-  },
-  sectionContent: {
-    gap: spacing.lg, // 16px gap between fields
   },
   // Field Styles
   fieldContainer: {
@@ -639,49 +486,6 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     fontWeight: '500',
     color: colors.indigo600,
-  },
-  // Modal Styles (based on wardrobe filter pattern)
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(7, 11, 28, 0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: spacing.xl,
-  },
-  modalCard: {
-    width: '100%',
-    maxWidth: 320,
-    backgroundColor: theme.surface,
-    borderRadius: radii.xl,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.sm,
-    borderWidth: 1,
-    borderColor: colors.indigo100,
-    gap: spacing.xs,
-    ...elevation.lg,
-  },
-  modalOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderRadius: radii.md,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
-  },
-  modalOptionActive: {
-    backgroundColor: colors.indigo50,
-  },
-  modalOptionText: {
-    ...typography.body,
-    color: theme.text_secondary,
-    flex: 1,
-  },
-  modalOptionTextActive: {
-    color: colors.indigo600,
-    fontWeight: '600',
-  },
-  modalOptionIcon: {
-    marginLeft: spacing.sm,
   },
   // Actions
   actions: {

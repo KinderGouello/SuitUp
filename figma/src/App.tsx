@@ -4,15 +4,31 @@ import { Wardrobe } from "./components/Wardrobe";
 import { AddItem } from "./components/AddItem";
 import { Preferences } from "./components/Preferences";
 import { OutfitGenerator } from "./components/OutfitGenerator";
+import { ItemDetail } from "./components/ItemDetail";
 import { Home, Shirt, Plus, Settings, Sparkles } from "lucide-react";
 import { Toaster } from "./components/ui/sonner";
 
+interface ClothingItem {
+  id: string;
+  name: string;
+  image: string;
+  labelImage: string;
+  category: string;
+  season: string;
+  color: string;
+  brand: string;
+  size: string;
+  material: string;
+  notes: string;
+}
+
 type TabType = "home" | "wardrobe" | "add" | "preferences";
-type ViewType = "tabs" | "outfit-generator";
+type ViewType = "tabs" | "outfit-generator" | "item-detail";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>("home");
   const [activeView, setActiveView] = useState<ViewType>("tabs");
+  const [selectedItem, setSelectedItem] = useState<ClothingItem | null>(null);
 
   const handleGenerateOutfit = () => {
     setActiveView("outfit-generator");
@@ -23,16 +39,31 @@ export default function App() {
     setActiveTab("home");
   };
 
+  const handleViewItem = (item: ClothingItem) => {
+    setSelectedItem(item);
+    setActiveView("item-detail");
+  };
+
+  const handleBackToWardrobe = () => {
+    setSelectedItem(null);
+    setActiveView("tabs");
+    setActiveTab("wardrobe");
+  };
+
   const renderContent = () => {
     if (activeView === "outfit-generator") {
       return <OutfitGenerator onBack={handleBackToDashboard} />;
+    }
+
+    if (activeView === "item-detail" && selectedItem) {
+      return <ItemDetail item={selectedItem} onBack={handleBackToWardrobe} />;
     }
 
     switch (activeTab) {
       case "home":
         return <Dashboard onGenerateOutfit={handleGenerateOutfit} />;
       case "wardrobe":
-        return <Wardrobe />;
+        return <Wardrobe onViewItem={handleViewItem} />;
       case "add":
         return <AddItem />;
       case "preferences":
@@ -59,7 +90,7 @@ export default function App() {
         {renderContent()}
       </main>
 
-      {/* Bottom Navigation - Hide when in outfit generator */}
+      {/* Bottom Navigation - Hide when not in tabs view */}
       {activeView === "tabs" && (
         <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white/80 backdrop-blur-xl border-t-2 border-indigo-100 shadow-2xl shadow-indigo-200/50">
           <div className="flex items-center justify-around px-2 py-2">

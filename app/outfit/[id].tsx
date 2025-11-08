@@ -26,6 +26,7 @@ import {
 } from 'lucide-react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Button } from '@/components/Button';
+import { GradientCard } from '@/components/GradientCard';
 import { useWardrobe } from '@/state/useWardrobe';
 import * as outfitsRepo from '@/lib/db/repo/outfits';
 import { Item, Outfit, OutfitSlot } from '@/lib/types';
@@ -35,8 +36,8 @@ type SwapContext = {
   item: Item;
 };
 
-const primaryGradient = ['#7c3aed', '#ec4899'];
-const badgeGradient = ['#7c3aed', '#db2777'];
+const primaryGradient = ['#7c3aed', '#ec4899'] as const;
+const badgeGradient = ['#7c3aed', '#db2777'] as const;
 
 export default function OutfitDetailScreen() {
   const router = useRouter();
@@ -235,14 +236,11 @@ export default function OutfitDetailScreen() {
 
           <View style={styles.generationCard}>
             <View style={styles.sparklesOrb}>
-              <LinearGradient
-                colors={primaryGradient}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.sparklesOrbGradient}
-              >
-                <Sparkles size={48} color="#fff" />
-              </LinearGradient>
+              <GradientCard
+                variant="orb"
+                gradientColors={primaryGradient}
+                icon={<Sparkles size={48} color="#fff" />}
+              />
             </View>
 
             <GradientText textStyle={styles.generationTitle} align="center">
@@ -342,11 +340,9 @@ export default function OutfitDetailScreen() {
         </View>
 
         <View style={styles.styleMatchCard}>
-          <LinearGradient
-            colors={['#f5f3ff', '#fff']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.styleMatchBackground}
+          <GradientCard
+            variant="subtle"
+            gradientColors={['#f5f3ff', '#fff']}
           >
             <View style={styles.styleMatchHeader}>
               <Text style={styles.styleMatchLabel}>Style Match</Text>
@@ -365,7 +361,7 @@ export default function OutfitDetailScreen() {
             <Text style={styles.styleMatchNote}>
               This outfit perfectly matches your preferences and the weather!
             </Text>
-          </LinearGradient>
+          </GradientCard>
         </View>
 
         <View style={styles.itemsSection}>
@@ -694,10 +690,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#ede9fe',
   },
-  styleMatchBackground: {
-    padding: 20,
-    gap: 12,
-  },
   styleMatchHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -890,12 +882,6 @@ const styles = StyleSheet.create({
     borderRadius: 60,
     padding: 4,
     backgroundColor: '#ede9fe',
-  },
-  sparklesOrbGradient: {
-    flex: 1,
-    borderRadius: 56,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   generationTitle: {
     fontSize: 28,

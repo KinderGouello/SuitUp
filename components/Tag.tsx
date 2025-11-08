@@ -1,22 +1,114 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  StyleProp,
+  ViewStyle,
+  TextStyle,
+} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { X } from 'lucide-react-native';
 import { theme, radii, typography, spacing, colors } from '@/lib/styles/tokens';
 
-interface TagProps {
+export interface TagProps {
+  /**
+   * Text displayed in the tag
+   */
   label: string;
+
+  /**
+   * Optional callback when remove icon is pressed
+   */
   onRemove?: () => void;
-  variant?: 'default' | 'primary' | 'outline' | 'subtle';
+
+  /**
+   * Visual style variant
+   * - default: Light gray background
+   * - primary: Accent color background
+   * - outline: Border with transparent background
+   * - subtle: Soft sapphire background
+   * - gradient: Linear gradient background (indigo to sky)
+   */
+  variant?: 'default' | 'primary' | 'outline' | 'subtle' | 'gradient';
+
+  /**
+   * Custom gradient colors (only used with gradient variant)
+   * @default [colors.indigo600, colors.sky500]
+   */
+  gradientColors?: readonly [string, string, ...string[]];
+
+  /**
+   * Custom container style
+   */
+  style?: StyleProp<ViewStyle>;
+
+  /**
+   * Custom text style
+   */
+  textStyle?: StyleProp<TextStyle>;
 }
 
-export function Tag({ label, onRemove, variant = 'default' }: TagProps) {
+/**
+ * Tag - Reusable badge/tag component
+ *
+ * A compact label component for displaying categories, statuses, or metadata.
+ * Supports multiple visual variants, optional remove functionality, and gradient styles.
+ *
+ * @example
+ * // Basic category badge
+ * <Tag label="Casual" variant="primary" />
+ *
+ * @example
+ * // Outline badge
+ * <Tag label="Summer" variant="outline" />
+ *
+ * @example
+ * // Gradient badge
+ * <Tag label="Featured" variant="gradient" />
+ *
+ * @example
+ * // Removable tag
+ * <Tag label="tag-name" variant="subtle" onRemove={() => removeTag('tag-name')} />
+ */
+export function Tag({
+  label,
+  onRemove,
+  variant = 'default',
+  gradientColors = [colors.indigo600, colors.sky500],
+  style,
+  textStyle,
+}: TagProps) {
   const isRemovable = !!onRemove;
 
   const getIconColor = () => {
-    if (variant === 'primary') return theme.surface;
+    if (variant === 'primary' || variant === 'gradient') return theme.surface;
     if (variant === 'outline') return theme.accent;
     return theme.text_tertiary;
   };
 
+  // Gradient variant uses LinearGradient wrapper
+  if (variant === 'gradient') {
+    return (
+      <LinearGradient
+        colors={gradientColors}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={[styles.container, styles.containerGradient, style]}
+      >
+        <Text style={[styles.label, styles.labelGradient, textStyle]}>
+          {label}
+        </Text>
+        {isRemovable && (
+          <Pressable onPress={onRemove} hitSlop={8}>
+            <X size={14} color={getIconColor()} strokeWidth={2} />
+          </Pressable>
+        )}
+      </LinearGradient>
+    );
+  }
+
+  // Standard variants use View wrapper
   return (
     <View
       style={[
@@ -24,6 +116,7 @@ export function Tag({ label, onRemove, variant = 'default' }: TagProps) {
         variant === 'primary' && styles.containerPrimary,
         variant === 'outline' && styles.containerOutline,
         variant === 'subtle' && styles.containerSubtle,
+        style,
       ]}
     >
       <Text
@@ -32,6 +125,7 @@ export function Tag({ label, onRemove, variant = 'default' }: TagProps) {
           variant === 'primary' && styles.labelPrimary,
           variant === 'outline' && styles.labelOutline,
           variant === 'subtle' && styles.labelSubtle,
+          textStyle,
         ]}
       >
         {label}
@@ -47,40 +141,46 @@ export function Tag({ label, onRemove, variant = 'default' }: TagProps) {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: theme.surface_subtle,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
     borderRadius: radii.pill,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    gap: spacing.xs,
-    borderWidth: 1,
-    borderColor: 'transparent',
   },
   containerPrimary: {
-    backgroundColor: theme.accent,
-    borderColor: theme.accent,
+    backgroundColor: '#f3e8ff',
+    borderWidth: 1,
+    borderColor: '#e9d5ff',
   },
   containerOutline: {
-    backgroundColor: 'transparent',
-    borderColor: theme.border_medium,
+    borderWidth: 1,
+    borderColor: '#fbcfe8',
+    backgroundColor: colors.white,
   },
   containerSubtle: {
-    backgroundColor: colors.sapphire50,
+    backgroundColor: '#f3e8ff',
+    borderWidth: 1,
+    borderColor: '#e9d5ff',
+  },
+  containerGradient: {
     borderColor: 'transparent',
   },
   label: {
-    ...typography.caption,
+    ...typography.micro,
     color: theme.text_secondary,
     fontWeight: '500',
   },
   labelPrimary: {
     color: theme.surface,
+    fontWeight: '600',
   },
   labelOutline: {
-    color: theme.accent,
+    color: '#be185d',
+    fontWeight: '500',
   },
   labelSubtle: {
-    color: theme.accent,
+    color: '#7e22ce',
+  },
+  labelGradient: {
+    color: colors.white,
+    fontWeight: '600',
   },
 });

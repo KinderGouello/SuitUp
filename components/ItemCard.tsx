@@ -1,8 +1,7 @@
 import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Eye } from 'lucide-react-native';
+import { Tag } from './Tag';
 import { Item } from '@/lib/types';
-import { theme, radii, elevation, typography, spacing, colors } from '@/lib/styles/tokens';
+import { theme, radii, elevation, spacing, colors } from '@/lib/styles/tokens';
 
 interface ItemCardProps {
   item: Item;
@@ -11,7 +10,8 @@ interface ItemCardProps {
 
 export function ItemCard({ item, onPress }: ItemCardProps) {
   const formatCategory = () => {
-    const label = item.category.charAt(0).toUpperCase() + item.category.slice(1);
+    const label =
+      item.category.charAt(0).toUpperCase() + item.category.slice(1);
     return label;
   };
 
@@ -36,43 +36,20 @@ export function ItemCard({ item, onPress }: ItemCardProps) {
 
   return (
     <Pressable onPress={onPress} style={styles.pressable}>
-      {({ pressed }) => (
-        <View style={[styles.container, pressed && styles.containerPressed]}>
+      {() => (
+        <View style={[styles.container]}>
           <View style={styles.imageContainer}>
             <Image
               source={{ uri: item.photoUri }}
               style={styles.image}
               resizeMode="cover"
             />
-            <LinearGradient
-              colors={['rgba(12, 15, 36, 0.65)', 'rgba(12, 15, 36, 0.0)']}
-              start={{ x: 0.5, y: 1 }}
-              end={{ x: 0.5, y: 0 }}
-              style={[
-                styles.imageOverlay,
-                pressed && styles.imageOverlayVisible,
-              ]}
-              pointerEvents="none"
-            >
-              <View style={styles.overlayContent}>
-                <Eye size={12} color={colors.white} strokeWidth={2} />
-                <Text style={styles.overlayText}>View Details</Text>
-              </View>
-            </LinearGradient>
           </View>
 
           <View style={styles.content}>
             <View style={styles.badgeRow}>
-              <View style={[styles.badge, styles.badgePrimary]}>
-                <Text style={[styles.badgeText, styles.badgePrimaryText]}>
-                  {formatCategory()}
-                </Text>
-              </View>
-              <View style={[styles.badge, styles.badgeOutline]}>
-                <Text style={[styles.badgeText, styles.badgeOutlineText]}>
-                  {formatSeason()}
-                </Text>
-              </View>
+              <Tag label={formatCategory()} variant="subtle" />
+              <Tag label={formatSeason()} variant="outline" />
             </View>
 
             <Text style={styles.name} numberOfLines={1}>
@@ -104,12 +81,6 @@ const styles = StyleSheet.create({
     ...elevation.sm,
     shadowColor: colors.indigo200,
   },
-  containerPressed: {
-    borderColor: colors.indigo200,
-    transform: [{ translateY: -4 }],
-    ...elevation.md,
-    shadowColor: colors.indigo300,
-  },
   imageContainer: {
     width: '100%',
     aspectRatio: 1, // Square aspect ratio per FIGMA
@@ -120,35 +91,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  imageOverlay: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    top: 0,
-    opacity: 0,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    paddingBottom: spacing.md,
-  },
-  imageOverlayVisible: {
-    opacity: 1,
-  },
-  overlayContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-    backgroundColor: 'rgba(15, 23, 42, 0.35)',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-    borderRadius: radii.pill,
-  },
-  overlayText: {
-    fontSize: 12,
-    color: colors.white,
-    fontWeight: '600',
-    letterSpacing: 0.5,
-  },
   content: {
     padding: spacing.md,
     gap: spacing.xs,
@@ -158,32 +100,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 4,
     marginBottom: 8,
-  },
-  badge: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: radii.pill,
-  },
-  badgePrimary: {
-    backgroundColor: '#f3e8ff',
-    borderWidth: 1,
-    borderColor: '#e9d5ff',
-  },
-  badgePrimaryText: {
-    color: '#7e22ce',
-    fontWeight: '600',
-  },
-  badgeOutline: {
-    borderWidth: 1,
-    borderColor: '#fbcfe8',
-    backgroundColor: colors.white,
-  },
-  badgeOutlineText: {
-    color: '#be185d',
-    fontWeight: '500',
-  },
-  badgeText: {
-    ...typography.micro,
   },
   name: {
     fontSize: 14,

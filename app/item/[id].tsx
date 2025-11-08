@@ -1,19 +1,15 @@
 import { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Image,
-  Alert,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Button } from '@/components/Button';
+import { SectionCard } from '@/components/SectionCard';
+import { Tag } from '@/components/Tag';
+import { EmptyState } from '@/components/EmptyState';
+import { LoadingState } from '@/components/LoadingState';
 import * as itemsRepo from '@/lib/db/repo/items';
 import { Item } from '@/lib/types';
 import { theme, radii, spacing, colors } from '@/lib/styles/tokens';
@@ -62,19 +58,17 @@ export default function ItemDetailScreen() {
   };
 
   if (loading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color={colors.indigo600} />
-      </View>
-    );
+    return <LoadingState />;
   }
 
   if (!item) {
     return (
-      <View style={styles.centered}>
-        <Text style={styles.errorText}>Item not found</Text>
-        <Button title="Go Back" onPress={() => router.back()} />
-      </View>
+      <EmptyState
+        title="Item not found"
+        description="This item may have been deleted or moved."
+        ctaText="Go Back"
+        onCtaPress={() => router.back()}
+      />
     );
   }
 
@@ -107,84 +101,80 @@ export default function ItemDetailScreen() {
         </View>
 
         <View style={styles.contentContainer}>
-        {/* Item Name Card */}
-        <View style={styles.card}>
-          <Text style={styles.itemName}>{item.name}</Text>
-          <View style={styles.badgeRow}>
-            <View style={styles.badgePrimary}>
-              <Text style={styles.badgePrimaryText}>
-                {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
-              </Text>
-            </View>
-            <View style={styles.badgeOutline}>
-              <Text style={styles.badgeOutlineText}>{formatSeason(item)}</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Images Grid */}
-        <View style={styles.imagesRow}>
-          <View style={styles.imageCard}>
-            <Text style={styles.imageLabel}>Item Photo</Text>
-            <View style={styles.imageContainer}>
-              <Image
-                source={{ uri: item.photoUri }}
-                style={styles.image}
-                resizeMode="cover"
-              />
-            </View>
-          </View>
-          <View style={styles.imageCard}>
-            <Text style={styles.imageLabel}>Label Photo</Text>
-            <View style={styles.imageContainer}>
-              <Image
-                source={{ uri: item.labelPhotoUri || item.photoUri }}
-                style={styles.image}
-                resizeMode="cover"
-              />
-            </View>
-          </View>
-        </View>
-
-        {/* Specifications Card */}
-        <View style={styles.card}>
-          <Text style={styles.sectionTitle}>Specifications</Text>
-          <View style={styles.specsGrid}>
-            <View style={styles.specItem}>
-              <Text style={styles.specLabel}>Brand</Text>
-              <Text style={styles.specValue}>
-                {item.brand || 'Not specified'}
-              </Text>
-            </View>
-            <View style={styles.specItem}>
-              <Text style={styles.specLabel}>Size</Text>
-              <Text style={styles.specValue}>
-                {item.size || 'Not specified'}
-              </Text>
-            </View>
-            <View style={styles.specItem}>
-              <Text style={styles.specLabel}>Color</Text>
-              <Text style={styles.specValue}>{formatColor(item)}</Text>
-            </View>
-            <View style={styles.specItem}>
-              <Text style={styles.specLabel}>Material</Text>
-              <Text style={styles.specValue}>
-                {item.fabric || 'Not specified'}
-              </Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Notes Card (Conditional) */}
-        {item.notes && (
+          {/* Item Name Card */}
           <View style={styles.card}>
-            <Text style={styles.sectionTitle}>Notes</Text>
-            <View style={styles.notesContainer}>
-              <Text style={styles.notesText}>{item.notes}</Text>
+            <Text style={styles.itemName}>{item.name}</Text>
+            <View style={styles.badgeRow}>
+              <Tag
+                label={
+                  item.category.charAt(0).toUpperCase() + item.category.slice(1)
+                }
+                variant="subtle"
+              />
+              <Tag label={formatSeason(item)} variant="outline" />
             </View>
           </View>
-        )}
 
+          {/* Images Grid */}
+          <View style={styles.imagesRow}>
+            <View style={styles.imageCard}>
+              <Text style={styles.imageLabel}>Item Photo</Text>
+              <View style={styles.imageContainer}>
+                <Image
+                  source={{ uri: item.photoUri }}
+                  style={styles.image}
+                  resizeMode="cover"
+                />
+              </View>
+            </View>
+            <View style={styles.imageCard}>
+              <Text style={styles.imageLabel}>Label Photo</Text>
+              <View style={styles.imageContainer}>
+                <Image
+                  source={{ uri: item.labelPhotoUri || item.photoUri }}
+                  style={styles.image}
+                  resizeMode="cover"
+                />
+              </View>
+            </View>
+          </View>
+
+          {/* Specifications Card */}
+          <SectionCard title="Specifications">
+            <View style={styles.specsGrid}>
+              <View style={styles.specItem}>
+                <Text style={styles.specLabel}>Brand</Text>
+                <Text style={styles.specValue}>
+                  {item.brand || 'Not specified'}
+                </Text>
+              </View>
+              <View style={styles.specItem}>
+                <Text style={styles.specLabel}>Size</Text>
+                <Text style={styles.specValue}>
+                  {item.size || 'Not specified'}
+                </Text>
+              </View>
+              <View style={styles.specItem}>
+                <Text style={styles.specLabel}>Color</Text>
+                <Text style={styles.specValue}>{formatColor(item)}</Text>
+              </View>
+              <View style={styles.specItem}>
+                <Text style={styles.specLabel}>Material</Text>
+                <Text style={styles.specValue}>
+                  {item.fabric || 'Not specified'}
+                </Text>
+              </View>
+            </View>
+          </SectionCard>
+
+          {/* Notes Card (Conditional) */}
+          {item.notes && (
+            <SectionCard title="Notes">
+              <View style={styles.notesContainer}>
+                <Text style={styles.notesText}>{item.notes}</Text>
+              </View>
+            </SectionCard>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -203,18 +193,6 @@ const styles = StyleSheet.create({
     right: 0,
     height: 4,
     zIndex: 10,
-  },
-  centered: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: spacing.xxl,
-    gap: spacing.lg,
-    backgroundColor: '#eef2ff',
-  },
-  errorText: {
-    fontSize: 16,
-    color: theme.text_tertiary,
   },
   // Header Section
   headerSection: {
@@ -235,7 +213,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
   },
-  // Card
+  // Card (kept for item name card and image cards)
   card: {
     backgroundColor: colors.white,
     borderRadius: radii.xl,
@@ -260,32 +238,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: spacing.xs,
     marginTop: spacing.sm,
-  },
-  badgePrimary: {
-    backgroundColor: colors.indigo100,
-    borderWidth: 1,
-    borderColor: colors.indigo200,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 4,
-    borderRadius: radii.pill,
-  },
-  badgePrimaryText: {
-    fontSize: 12,
-    color: colors.indigo700,
-    fontWeight: '600',
-  },
-  badgeOutline: {
-    borderWidth: 1,
-    borderColor: colors.sky300,
-    backgroundColor: colors.white,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 4,
-    borderRadius: radii.pill,
-  },
-  badgeOutlineText: {
-    fontSize: 12,
-    color: colors.sky700,
-    fontWeight: '500',
   },
   // Images
   imagesRow: {
@@ -323,12 +275,6 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   // Specifications
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#374151',
-    marginBottom: spacing.sm,
-  },
   specsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
