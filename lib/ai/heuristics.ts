@@ -227,6 +227,7 @@ function scoreItem(
 ): number {
   let score = 100;
 
+  // Penalize recently worn items
   const daysAgo = item.lastWorn
     ? (Date.now() - item.lastWorn) / (1000 * 60 * 60 * 24)
     : 999;
@@ -235,15 +236,7 @@ function scoreItem(
     score -= (7 - daysAgo) * 10;
   }
 
-  if (item.tags) {
-    const hasAvoidTag = item.tags.some((tag) =>
-      prefs.avoidTags?.includes(tag)
-    );
-    if (hasAvoidTag) {
-      score -= 50;
-    }
-  }
-
+  // Score based on warmth requirements
   if (item.warmth !== undefined) {
     if (item.warmth >= requiredWarmth) {
       score += 10;

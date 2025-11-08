@@ -17,8 +17,11 @@ export interface Item {
   updatedAt: number;
   name: string;
   photoUri: string;
+  labelPhotoUri?: string;
   category: Category;
   subcategory?: string;
+  brand?: string;
+  size?: string;
   colors: string[];
   fabric?: string;
   warmth?: Warmth;
@@ -28,6 +31,7 @@ export interface Item {
   seasons?: string[];
   formalLevel?: number;
   cost?: number;
+  notes?: string;
   lastWorn?: number;
   archived?: boolean;
 }
@@ -42,21 +46,34 @@ export type StylePreference =
   | 'edgy'
   | 'boho';
 
-export type Fit = 'regular' | 'oversized' | 'slim';
-
-export type DressCode =
-  | 'office'
-  | 'business_formal'
-  | 'smart_casual'
-  | 'weekend'
-  | 'workout';
+export type ColorPalette =
+  | 'neutral'
+  | 'bold'
+  | 'pastel'
+  | 'monochrome'
+  | 'earth';
 
 export interface Preferences {
+  // Profile Information
+  // name: string;
+  // email: string;
+  location: string;
+
+  // Style Preferences
   stylePreference: StylePreference;
-  fit: Fit;
-  dressCodes: DressCode[];
-  avoidTags?: string[];
+  colorPalette?: ColorPalette;
+  formalityLevel?: number;
   units: 'metric' | 'imperial';
+
+  // Outfit Suggestions
+  dailySuggestion: boolean;
+  weatherBased: boolean;
+  // occasionBased: boolean;
+
+  // Notifications
+  enableNotifications: boolean;
+  // outfitReminder: boolean;
+  // weatherAlerts: boolean;
 }
 
 export interface WeatherSnapshot {

@@ -2,20 +2,40 @@ import { getDatabase } from '../init';
 import { Preferences } from '@/lib/types';
 
 const DEFAULT_PREFERENCES: Preferences = {
+  // Profile Information
+  location: '',
+
+  // Style Preferences
   stylePreference: 'casual',
-  fit: 'regular',
-  dressCodes: ['smart_casual', 'weekend'],
-  avoidTags: [],
+  colorPalette: 'neutral',
+  formalityLevel: 3,
   units: 'metric',
+
+  // Outfit Suggestions
+  dailySuggestion: true,
+  weatherBased: true,
+
+  // Notifications
+  enableNotifications: true,
 };
 
 function rowToPreferences(row: any): Preferences {
   return {
+    // Profile Information
+    location: row.location || '',
+
+    // Style Preferences
     stylePreference: row.style_preference,
-    fit: row.fit,
-    dressCodes: JSON.parse(row.dress_codes),
-    avoidTags: row.avoid_tags ? JSON.parse(row.avoid_tags) : undefined,
+    colorPalette: row.color_palette || 'neutral',
+    formalityLevel: row.formality_level || 3,
     units: row.units,
+
+    // Outfit Suggestions (convert 0/1 to boolean)
+    dailySuggestion: Boolean(row.daily_suggestion),
+    weatherBased: Boolean(row.weather_based),
+
+    // Notifications (convert 0/1 to boolean)
+    enableNotifications: Boolean(row.enable_notifications),
   };
 }
 
@@ -35,14 +55,25 @@ export async function savePreferences(prefs: Preferences): Promise<void> {
   const db = getDatabase();
   await db.runAsync(
     `INSERT OR REPLACE INTO preferences (
-      id, style_preference, fit, dress_codes, avoid_tags, units
-    ) VALUES (1, ?, ?, ?, ?, ?)`,
+      id,
+      location,
+      style_preference,
+      color_palette,
+      formality_level,
+      units,
+      daily_suggestion,
+      weather_based,
+      enable_notifications
+    ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
+      prefs.location,
       prefs.stylePreference,
-      prefs.fit,
-      JSON.stringify(prefs.dressCodes),
-      prefs.avoidTags ? JSON.stringify(prefs.avoidTags) : null,
+      prefs.colorPalette || 'neutral',
+      prefs.formalityLevel || 3,
       prefs.units,
+      prefs.dailySuggestion ? 1 : 0,
+      prefs.weatherBased ? 1 : 0,
+      prefs.enableNotifications ? 1 : 0,
     ]
   );
 }

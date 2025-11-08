@@ -56,7 +56,7 @@ export default function WardrobeScreen() {
   };
 
   const filterOptions: Array<{ label: string; value: Category | 'all' }> = [
-    { label: 'All Items', value: 'all' },
+    { label: 'All', value: 'all' },
     { label: 'Tops', value: 'top' },
     { label: 'Bottoms', value: 'bottom' },
     { label: 'Dresses', value: 'dress' },
@@ -111,7 +111,7 @@ export default function WardrobeScreen() {
       <View style={styles.searchContainer}>
         <View style={styles.searchRow}>
           <View style={styles.searchBar}>
-            <Search size={20} color={colors.indigo400} strokeWidth={2} />
+            <Search size={16} color={colors.indigo400} strokeWidth={2} />
             <TextInput
               style={styles.searchInput}
               placeholder="Search your style..."
@@ -128,13 +128,13 @@ export default function WardrobeScreen() {
             accessibilityHint="Opens a list of wardrobe filters"
           >
             <SlidersHorizontal
-              size={18}
+              size={16}
               color={colors.indigo500}
               strokeWidth={2}
             />
             <Text style={styles.filterTriggerLabel}>
               {filterOptions.find((option) => option.value === selectedCategory)
-                ?.label ?? 'All Items'}
+                ?.label ?? 'All'}
             </Text>
             <ChevronDown
               size={16}
@@ -246,17 +246,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xl,
     paddingTop: spacing.lg,
     paddingBottom: spacing.md,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
   },
   headerText: {
     gap: spacing.xs,
   },
   titleMask: {
-    ...typography.h1,
     fontSize: 28,
     fontWeight: '700',
+    lineHeight: 36,
   },
   gradientTitle: {
     paddingVertical: 2,
@@ -264,28 +261,30 @@ const styles = StyleSheet.create({
   subtitleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.xs,
+    gap: 4,
   },
   subtitle: {
-    ...typography.bodySmall,
+    fontSize: 14,
     color: theme.text_tertiary,
+    lineHeight: 20,
   },
   // Search Bar
   searchContainer: {
-    paddingHorizontal: spacing.medium,
+    paddingHorizontal: spacing.xl,
     paddingBottom: spacing.lg,
   },
   searchRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.md,
+    gap: 8,
   },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: theme.surface,
     borderRadius: radii.lg,
-    paddingHorizontal: spacing.lg,
+    paddingLeft: 12,
+    paddingRight: spacing.lg,
     height: 48,
     gap: spacing.sm,
     borderWidth: 1.5,
@@ -294,8 +293,9 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    ...typography.body,
+    fontSize: 16,
     color: theme.text_primary,
+    paddingVertical: 0,
   },
   filterTrigger: {
     flexDirection: 'row',
@@ -304,16 +304,17 @@ const styles = StyleSheet.create({
     borderRadius: radii.lg,
     borderWidth: 1.5,
     borderColor: colors.indigo200,
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: 12,
     height: 48,
-    gap: spacing.xs,
-    flexShrink: 0,
+    gap: 8,
+    minWidth: 120,
     ...elevation.sm,
   },
   filterTriggerLabel: {
-    ...typography.bodySmall,
+    fontSize: 14,
     color: theme.text_secondary,
     fontWeight: '600',
+    flex: 1,
   },
   filterModalOverlay: {
     flex: 1,

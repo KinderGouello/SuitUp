@@ -113,11 +113,14 @@ export async function syncPreferencesToCloud(preferences: Preferences): Promise<
       .from('preferences')
       .upsert({
         id: 1,
+        location: preferences.location,
         style_preference: preferences.stylePreference,
-        fit: preferences.fit,
-        dress_codes: JSON.stringify(preferences.dressCodes),
-        avoid_tags: JSON.stringify(preferences.avoidTags),
+        color_palette: preferences.colorPalette,
+        formality_level: preferences.formalityLevel,
         units: preferences.units,
+        daily_suggestion: preferences.dailySuggestion,
+        weather_based: preferences.weatherBased,
+        enable_notifications: preferences.enableNotifications,
       });
 
     if (error) throw error;
@@ -159,11 +162,14 @@ export async function fetchPreferencesFromCloud(): Promise<Preferences | null> {
   }
 
   return {
+    location: data.location || '',
     stylePreference: data.style_preference,
-    fit: data.fit,
-    dressCodes: JSON.parse(data.dress_codes),
-    avoidTags: JSON.parse(data.avoid_tags || '[]'),
+    colorPalette: data.color_palette || 'neutral',
+    formalityLevel: data.formality_level || 3,
     units: data.units,
+    dailySuggestion: Boolean(data.daily_suggestion),
+    weatherBased: Boolean(data.weather_based),
+    enableNotifications: Boolean(data.enable_notifications),
   };
 }
 

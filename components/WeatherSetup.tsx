@@ -6,6 +6,7 @@ import {
   TextInput,
   ActivityIndicator,
   Alert,
+  Pressable,
 } from 'react-native';
 import * as Location from 'expo-location';
 import { MapPin, Navigation } from 'lucide-react-native';
@@ -158,7 +159,13 @@ export function WeatherSetup({ onWeatherLoaded }: WeatherSetupProps) {
   }
 
   return (
-    <View style={styles.container}>
+    <Pressable
+      style={styles.container}
+      onPress={handleUseGPS}
+      disabled={loading}
+      accessibilityRole="button"
+      accessibilityLabel="Use current location for weather"
+    >
       <View style={styles.iconContainer}>
         <Navigation size={24} color={theme.accent} strokeWidth={1.5} />
       </View>
@@ -196,7 +203,7 @@ export function WeatherSetup({ onWeatherLoaded }: WeatherSetupProps) {
           <Text style={styles.loadingText}>Getting weather data...</Text>
         </View>
       )}
-    </View>
+    </Pressable>
   );
 }
 

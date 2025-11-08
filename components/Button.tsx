@@ -4,6 +4,9 @@ import {
   StyleSheet,
   ActivityIndicator,
   View,
+  StyleProp,
+  ViewStyle,
+  TextStyle,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
@@ -26,6 +29,9 @@ interface ButtonProps {
   loading?: boolean;
   fullWidth?: boolean;
   icon?: React.ReactNode;
+  style?: StyleProp<ViewStyle>;
+  pressedStyle?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
 }
 
 export function Button({
@@ -37,6 +43,9 @@ export function Button({
   loading = false,
   fullWidth = false,
   icon,
+  style,
+  pressedStyle,
+  textStyle,
 }: ButtonProps) {
   // Debug logging
   console.log('Button Debug:', {
@@ -67,6 +76,7 @@ export function Button({
               styles.text,
               styles[`text_${size}`],
               styles[`text_${variant}`],
+              textStyle,
             ]}
           >
             {title}
@@ -97,6 +107,8 @@ export function Button({
               styles[`button_${size}`],
               styles.button_gradient,
               pressed && styles.button_gradient_pressed,
+              style,
+              pressed && pressedStyle,
             ]}
           >
             {buttonContent(pressed)}
@@ -121,6 +133,8 @@ export function Button({
         pressed && variant === 'secondary' && styles.button_secondary_pressed,
         pressed && variant === 'ghost' && { opacity: opacity.muted },
         (disabled || loading) && styles.button_disabled,
+        style,
+        pressed && pressedStyle,
       ]}
     >
       {buttonContent(false)}

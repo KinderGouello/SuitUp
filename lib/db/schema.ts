@@ -7,14 +7,21 @@ export const CREATE_ITEMS_TABLE = `
     updated_at INTEGER NOT NULL,
     name TEXT NOT NULL,
     photo_uri TEXT NOT NULL,
+    label_photo_uri TEXT,
     category TEXT NOT NULL,
     subcategory TEXT,
+    brand TEXT,
+    size TEXT,
     colors TEXT NOT NULL,
     fabric TEXT,
     warmth INTEGER,
     waterproof INTEGER DEFAULT 0,
     windproof INTEGER DEFAULT 0,
     tags TEXT,
+    seasons TEXT,
+    formal_level INTEGER,
+    cost REAL,
+    notes TEXT,
     last_worn INTEGER,
     archived INTEGER DEFAULT 0
   );
@@ -23,11 +30,19 @@ export const CREATE_ITEMS_TABLE = `
 export const CREATE_PREFERENCES_TABLE = `
   CREATE TABLE IF NOT EXISTS preferences (
     id INTEGER PRIMARY KEY CHECK (id = 1),
+    name TEXT NOT NULL DEFAULT '',
+    email TEXT NOT NULL DEFAULT '',
+    location TEXT NOT NULL DEFAULT '',
     style_preference TEXT NOT NULL,
-    fit TEXT NOT NULL,
-    dress_codes TEXT NOT NULL,
-    avoid_tags TEXT,
-    units TEXT NOT NULL DEFAULT 'metric'
+    color_palette TEXT NOT NULL DEFAULT 'neutral',
+    formality_level INTEGER NOT NULL DEFAULT 3,
+    units TEXT NOT NULL DEFAULT 'metric',
+    daily_suggestion INTEGER DEFAULT 1,
+    weather_based INTEGER DEFAULT 1,
+    occasion_based INTEGER DEFAULT 0,
+    enable_notifications INTEGER DEFAULT 1,
+    outfit_reminder INTEGER DEFAULT 1,
+    weather_alerts INTEGER DEFAULT 1
   );
 `;
 

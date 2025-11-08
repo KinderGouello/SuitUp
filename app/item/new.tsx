@@ -33,11 +33,14 @@ export default function NewItemScreen() {
   const [name, setName] = useState('');
   const [category, setCategory] = useState<Category>('top');
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
+  const [brand, setBrand] = useState('');
+  const [size, setSize] = useState('');
   const [colors, setColors] = useState<string[]>([]);
   const [fabric, setFabric] = useState('');
   const [warmth, setWarmth] = useState<Warmth>(2);
   const [waterproof, setWaterproof] = useState(false);
   const [windproof, setWindproof] = useState(false);
+  const [notes, setNotes] = useState('');
 
   const [loading, setLoading] = useState(false);
   const [currentPhotoType, setCurrentPhotoType] = useState<'item' | 'label'>('item');
@@ -167,12 +170,16 @@ export default function NewItemScreen() {
         updatedAt: Date.now(),
         name: name.trim(),
         photoUri: photoUri || 'https://via.placeholder.com/300x400?text=No+Photo',
+        labelPhotoUri: labelPhotoUri || undefined,
         category,
+        brand: brand.trim() || undefined,
+        size: size.trim() || undefined,
         colors: colors.length > 0 ? colors : ['#808080'],
         fabric: fabric.trim() || undefined,
         warmth,
         waterproof,
         windproof,
+        notes: notes.trim() || undefined,
         archived: false,
       };
 
@@ -394,6 +401,28 @@ export default function NewItemScreen() {
       </View>
 
       <View style={styles.field}>
+        <Text style={styles.label}>Brand (optional)</Text>
+        <TextInput
+          style={styles.input}
+          value={brand}
+          onChangeText={setBrand}
+          placeholder="e.g., Nike, Uniqlo, Zara"
+          placeholderTextColor={theme.text_tertiary}
+        />
+      </View>
+
+      <View style={styles.field}>
+        <Text style={styles.label}>Size (optional)</Text>
+        <TextInput
+          style={styles.input}
+          value={size}
+          onChangeText={setSize}
+          placeholder="e.g., M, L, 32, 10"
+          placeholderTextColor={theme.text_tertiary}
+        />
+      </View>
+
+      <View style={styles.field}>
         <Text style={styles.label}>Fabric (optional)</Text>
         <TextInput
           style={styles.input}
@@ -424,6 +453,20 @@ export default function NewItemScreen() {
           <Text style={styles.sliderLabel}>Very Light</Text>
           <Text style={styles.sliderLabel}>Extra Warm</Text>
         </View>
+      </View>
+
+      <View style={styles.field}>
+        <Text style={styles.label}>Notes (optional)</Text>
+        <TextInput
+          style={[styles.input, styles.textArea]}
+          value={notes}
+          onChangeText={setNotes}
+          placeholder="Add any notes about this item..."
+          placeholderTextColor={theme.text_tertiary}
+          multiline
+          numberOfLines={3}
+          textAlignVertical="top"
+        />
       </View>
 
       <View style={styles.actions}>
@@ -699,6 +742,10 @@ const styles = StyleSheet.create({
     padding: spacing.medium,
     ...typography.body,
     color: theme.text_primary,
+  },
+  textArea: {
+    minHeight: 80,
+    paddingTop: spacing.medium,
   },
   dropdown: {
     backgroundColor: theme.surface,

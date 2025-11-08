@@ -103,14 +103,16 @@ export default function TabLayout() {
             }}
           />
           <Tabs.Screen
-            name="preferences"
+            name="settings"
             options={{
               title: 'Add',
               headerTitle: 'Add Item',
               href: '/item/new',
               tabBarIcon: ({ focused }) => (
                 <TabIcon
-                  icon={<Plus size={20} color={colors.white} strokeWidth={2.5} />}
+                  icon={
+                    <Plus size={20} color={colors.white} strokeWidth={2.5} />
+                  }
                   label="Add"
                   focused={focused}
                   isAddButton
@@ -119,7 +121,7 @@ export default function TabLayout() {
             }}
           />
           <Tabs.Screen
-            name="settings"
+            name="preferences"
             options={{
               title: 'Profile',
               headerTitle: 'Preferences',
@@ -164,12 +166,12 @@ function TabIcon({
     return (
       <View style={[styles.tabButton, styles.activeTabButton]}>
         {/* Main gradient background */}
-        <LinearGradient
+        {/* <LinearGradient
           colors={[colors.indigo600, colors.sky500]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.gradientBackground}
-        />
+        /> */}
         {/* Blurred gradient behind for depth */}
         {/* <LinearGradient
           colors={[colors.indigo600, colors.sky500]}
@@ -190,7 +192,7 @@ function TabIcon({
               {icon}
             </LinearGradient>
           </View>
-          <Text style={styles.activeTabLabel} numberOfLines={1}>
+          <Text style={styles.inactiveTabLabel} numberOfLines={1}>
             {label}
           </Text>
         </View>

@@ -55,7 +55,7 @@ export function ItemCard({ item, onPress }: ItemCardProps) {
               pointerEvents="none"
             >
               <View style={styles.overlayContent}>
-                <Eye size={14} color={colors.white} strokeWidth={2} />
+                <Eye size={12} color={colors.white} strokeWidth={2} />
                 <Text style={styles.overlayText}>View Details</Text>
               </View>
             </LinearGradient>
@@ -144,10 +144,9 @@ const styles = StyleSheet.create({
     borderRadius: radii.pill,
   },
   overlayText: {
-    ...typography.micro,
+    fontSize: 12,
     color: colors.white,
     fontWeight: '600',
-    textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   content: {
@@ -157,8 +156,8 @@ const styles = StyleSheet.create({
   badgeRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.xs,
-    marginBottom: spacing.xs,
+    gap: 4,
+    marginBottom: 8,
   },
   badge: {
     paddingHorizontal: spacing.sm,
@@ -187,12 +186,15 @@ const styles = StyleSheet.create({
     ...typography.micro,
   },
   name: {
-    ...typography.bodySmall,
+    fontSize: 14,
+    lineHeight: 20,
     color: theme.text_primary,
     fontWeight: '600',
   },
   colorText: {
-    ...typography.caption,
-    color: theme.text_tertiary,
+    fontSize: 12,
+    lineHeight: 16,
+    color: '#6b7280',
+    marginTop: 4,
   },
 });
