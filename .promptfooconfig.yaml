@@ -1,5 +1,5 @@
 # Promptfoo Configuration for SuitUp AI Prompts
-# Run tests with: npx promptfoo eval
+# Run tests with: pnpm test:prompts (or npx promptfoo eval)
 
 description: 'SuitUp outfit recommendation prompt evaluation'
 

@@ -2,11 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(npx expo install:*)",
-      "Bash(npm start)",
-      "Bash(npm run dev:*)",
+      "Bash(pnpm start)",
+      "Bash(pnpm dev:*)",
       "Bash(claude mcp add:*)",
-      "Bash(npm run typecheck:*)",
-      "Bash(npm install:*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(pnpm install:*)",
       "Bash(cat:*)"
     ],
     "deny": [],

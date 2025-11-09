@@ -132,10 +132,10 @@ if (langfuse) {
 
 ```bash
 # Run all prompt tests
-npm run test:prompts
+pnpm test:prompts
 
 # Run tests and open web UI
-npm run test:prompts:ui
+pnpm test:prompts:ui
 
 # Run specific test
 npx promptfoo eval --config .promptfooconfig.yaml
@@ -211,7 +211,7 @@ We've included test cases for:
 
 3. **Run tests**:
    ```bash
-   npm run test:prompts
+   pnpm test:prompts
    ```
 
 ## Cloud AI Roadmap

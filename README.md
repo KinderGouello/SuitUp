@@ -28,31 +28,31 @@ A modern React Native Expo app that helps you catalog your wardrobe and get dail
 ### Prerequisites
 
 - Node.js 18+
-- npm or yarn
+- pnpm 9+
 - Expo CLI
 
 ### Installation
 
 \`\`\`bash
-npm install
+pnpm install
 \`\`\`
 
 ### Running the App
 
 \`\`\`bash
 # Start development server
-npm run dev
+pnpm dev
 
 # Run on iOS simulator
-npm run dev
+pnpm dev
 # Then press 'i'
 
 # Run on Android emulator
-npm run dev
+pnpm dev
 # Then press 'a'
 
 # Run on web (Note: SQLite not supported on web)
-npm run dev
+pnpm dev
 # Then press 'w'
 \`\`\`
 
@@ -186,10 +186,10 @@ The app includes 12 sample items:
 
 \`\`\`bash
 # Type checking
-npm run typecheck
+pnpm typecheck
 
 # Linting
-npm run lint
+pnpm lint
 \`\`\`
 
 ## Known Limitations

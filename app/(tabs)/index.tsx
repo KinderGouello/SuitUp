@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,6 @@ import {
   ActivityIndicator,
   Alert,
   Pressable,
-  Image,
 } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import * as Location from 'expo-location';
@@ -25,14 +24,7 @@ import { useSettings } from '@/state/useSettings';
 import * as weatherRepo from '@/lib/db/repo/weather';
 import * as outfitsRepo from '@/lib/db/repo/outfits';
 import { WeatherSnapshot, Outfit } from '@/lib/types';
-import {
-  Sparkles,
-  TrendingUp,
-  Flame,
-  Star,
-  Trophy,
-  Zap,
-} from 'lucide-react-native';
+import { Sparkles, Zap } from 'lucide-react-native';
 import {
   theme,
   typography,
@@ -41,7 +33,6 @@ import {
   elevation,
   colors,
 } from '@/lib/styles/tokens';
-import { LinearGradient } from 'expo-linear-gradient';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -221,69 +212,6 @@ export default function HomeScreen() {
     );
   }
 
-  // Dynamic greeting based on weather
-  const getWeatherGreeting = () => {
-    if (!weather) {
-      return {
-        greeting: 'Welcome back',
-        subtitle: 'Your sustainable wardrobe companion',
-      };
-    }
-
-    const temp = weather.tempC;
-    const condition = weather.condition.toLowerCase();
-    const hour = new Date().getHours();
-
-    // Time-based greeting
-    let timeGreeting = 'Welcome back';
-    if (hour >= 5 && hour < 12) timeGreeting = 'Good morning';
-    else if (hour >= 12 && hour < 17) timeGreeting = 'Good afternoon';
-    else if (hour >= 17 && hour < 22) timeGreeting = 'Good evening';
-
-    // Weather-based motivational subtitle
-    let subtitle = '';
-
-    if (condition.includes('rain') || condition.includes('drizzle')) {
-      subtitle = `It's rainy out there! Perfect for cozy layered looks`;
-    } else if (condition.includes('snow')) {
-      subtitle = `Snowy weather ahead! Time to bundle up in style`;
-    } else if (condition.includes('cloud') || condition.includes('overcast')) {
-      subtitle = `Cloudy skies today - great for any outfit choice`;
-    } else if (condition.includes('sun') || condition.includes('clear')) {
-      if (temp > 25) {
-        subtitle = `Sunny and warm! Light, breathable fabrics today`;
-      } else {
-        subtitle = `Beautiful sunny day! Dress comfortably`;
-      }
-    } else if (condition.includes('wind')) {
-      subtitle = `Windy conditions - windproof layers recommended`;
-    } else if (condition.includes('fog') || condition.includes('mist')) {
-      subtitle = `Misty morning - layer up for changing conditions`;
-    } else {
-      // Temperature-based fallback
-      if (temp < 5) {
-        subtitle = `Bundle up warm! It's ${temp}° outside`;
-      } else if (temp < 15) {
-        subtitle = `Cool weather at ${temp}° - perfect for layering`;
-      } else if (temp < 25) {
-        subtitle = `Pleasant ${temp}° weather - dress comfortably`;
-      } else {
-        subtitle = `Warm ${temp}° day - keep it light and breezy`;
-      }
-    }
-
-    return { greeting: timeGreeting, subtitle };
-  };
-
-  const { greeting, subtitle } = getWeatherGreeting();
-
-  // Mock stats for now - these would come from actual data
-  const stats = {
-    streak: 7,
-    styleScore: 92,
-    outfitsCreated: items.length > 0 ? Math.min(items.length * 2, 24) : 0,
-  };
-
   // Daily motivations
   const motivations = [
     "You're killing it! 🔥",
@@ -342,16 +270,36 @@ export default function HomeScreen() {
         {items.length > 0 && weather && (
           <GradientCard
             variant="horizontal"
-            icon={<Sparkles size={32} color={colors.white} fill={colors.white} />}
+            icon={
+              <Sparkles size={32} color={colors.white} fill={colors.white} />
+            }
             style={{ marginHorizontal: spacing.xl, ...elevation.lg }}
-            iconContainerStyle={{ width: 64, height: 64, padding: spacing.lg, borderRadius: radii.xl }}
+            iconContainerStyle={{
+              width: 64,
+              height: 64,
+              padding: spacing.lg,
+              borderRadius: radii.xl,
+            }}
           >
             <View style={{ flex: 1, gap: spacing.sm }}>
-              <Text style={{ ...typography.subtitle, color: colors.white, fontWeight: '600' }}>
+              <Text
+                style={{
+                  ...typography.subtitle,
+                  color: colors.white,
+                  fontWeight: '600',
+                }}
+              >
                 Want a fresh look?
               </Text>
-              <Text style={{ ...typography.bodySmall, color: 'rgba(255, 255, 255, 0.9)', marginBottom: spacing.xs }}>
-                Generate a new outfit based on today's weather and your style!
+              <Text
+                style={{
+                  ...typography.bodySmall,
+                  color: 'rgba(255, 255, 255, 0.9)',
+                  marginBottom: spacing.xs,
+                }}
+              >
+                Generate a new outfit based on today&apos;s weather and your
+                style!
               </Text>
               <Pressable
                 style={styles.ctaButton}

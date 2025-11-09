@@ -123,7 +123,7 @@ export function WeatherSetup({ onWeatherLoaded }: WeatherSetupProps) {
         <View style={styles.content}>
           <Text style={styles.title}>Enter Your City</Text>
           <Text style={styles.description}>
-            We'll get weather data for outfit recommendations
+            We&apos;ll get weather data for outfit recommendations
           </Text>
 
           <TextInput

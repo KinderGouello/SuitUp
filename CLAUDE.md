@@ -8,6 +8,31 @@ SuitUp is a React Native Expo app for wardrobe management and weather-based outf
 
 **Tech Stack**: Expo SDK 54, React Native, TypeScript, Expo Router (file-based routing), Zustand (state), TanStack Query, Expo SQLite, Supabase (optional cloud sync), NativeWind (Tailwind CSS), Lucide Icons, Open-Meteo API, Langfuse (LLM observability), Promptfoo (prompt testing).
 
+## Project Tooling
+
+- **Turborepo**: orchestration des builds avec cache intelligent
+- **pnpm workspaces (recommandé)**: gestion des dépendances multi-packages
+- **Changesets**: versioning automatique et génération des changelogs
+- **Docker Compose**: base de données locale (PostgreSQL, Redis, etc.)
+- **Concurrently**: lancer plusieurs processus en développement
+- **Prisma**: ORM
+- **Zod**: validation de schémas
+- **tRPC**: API type-safe de bout en bout
+- **Playwright**: tests E2E
+- **GitHub Actions**: CI/CD
+- **Turborepo Remote Cache**: cache distribué pour les builds
+- **Supabase**: base PostgreSQL managée
+- **react-native-mmkv**: cache mobile haute performance
+- **Fastlane**: automatisation mobile (iOS/Android)
+- **Docker**: containerisation de l'API
+- **GitHub Container Registry**: distribution des images Docker
+- **Sentry**: error tracking (front + back)
+- **R2 Cloudflare**: CDN management
+- **Supabase Auth**: gestion de l'authentification
+- **Upstash**: Redis cache backend
+- **LogRocket**: monitoring
+- **Mixpanel**: analytics produit
+
 ## Notion Documentation Hub
 
 **Primary Documentation**: [Suit Up! Notion Page](https://www.notion.so/2a2f1561e5c2803993a0cfd3b24bb039)
@@ -23,6 +48,7 @@ This Notion workspace serves as the central hub for all product-level documentat
 
 ### Technical Documentation (In Codebase)
 - Architecture: See `context/ARCHITECTURE.md`
+- Prompt-ready architecture context (for agents): See `agents/architecture.md`
 - API Contracts: See `context/SPECS.md` (sections 10-12)
 - Database: See `lib/db/schema.ts` and this file's Database Layer section
 - Supabase Integration: See `lib/supabase/README.md`
@@ -31,6 +57,22 @@ This Notion workspace serves as the central hub for all product-level documentat
 **Note**: Product specifications are being progressively migrated from `context/SPECS.md` to Notion. Technical implementation details remain in the codebase.
 
 Use Notion MCP tools to query and update product documentation when needed.
+
+## Linear MCP Usage
+
+- The Linear workspace already has a `Suit Up!` project; always scope Linear MCP requests (listing, creating, updating issues) to this project by passing `project: "Suit Up!"`.
+- When creating new tickets, ensure they land in the `Suit Up!` project backlog unless the user explicitly requests a different destination.
+- If you need a project context reminder, the canonical reference is this file plus `agents/architecture.md`; keep both linked in any downstream prompts or handoffs.
+
+### Current Feature Snapshot (code reality)
+
+Use this list whenever you need to reconcile Notion specs with the shipped app:
+- **Wardrobe capture**: Single-item flow with optional label photo. No batch import, background removal, or computer-vision auto-tagging. Dominant color extraction is stubbed to `#808080`.
+- **Preferences**: Users pick one style archetype, one color palette, and a numeric formality slider. No multi-select weights, occasion presets, fit constraints, or notification granularity yet.
+- **Outfit generation**: `recommendOutfit` returns exactly one outfit per request using heuristic slot-filling (weather-aware filtering, last-worn penalty). No confidence score, multiple suggestions, occasion handling, or swap/lock tooling.
+- **Weather context**: Single snapshot fetched via GPS or manual city and cached in SQLite. No forecast range, UV index, or activity-aware adjustments.
+- **Data management**: “Export Data” logs JSON to the console; there is no import/restore UI. Supabase sync helpers exist but are not wired into the app.
+- **Onboarding**: Collects only location preference (GPS vs manual city) and marks onboarding complete. No style questionnaire or wardrobe seeding wizard.
 
 ## Documentation Lookup Policy
 
@@ -67,24 +109,24 @@ Use Notion MCP tools to query and update product documentation when needed.
 
 ```bash
 # Start development server
-npm run dev
+pnpm dev
 
 # Type checking
-npm run typecheck
+pnpm typecheck
 
 # Linting
-npm run lint
+pnpm lint
 
 # Build for web (note: SQLite not supported on web)
-npm run build:web
+pnpm build:web
 
 # Prompt testing (requires LLM API keys in .env)
-npm run test:prompts           # Run all prompt tests
-npm run test:prompts:ui        # Run tests and open web UI
-npm run test:prompts:watch     # Watch mode for test development
+pnpm test:prompts           # Run all prompt tests
+pnpm test:prompts:ui        # Run tests and open web UI
+pnpm test:prompts:watch     # Watch mode for test development
 ```
 
-After `npm run dev`, press 'i' for iOS simulator, 'a' for Android emulator, or 'w' for web.
+After `pnpm dev`, press 'i' for iOS simulator, 'a' for Android emulator, or 'w' for web.
 
 ## Architecture
 
@@ -229,12 +271,27 @@ The app uses a two-phase initialization in `app/_layout.tsx`:
 - Zustand stores catch errors and set `error` state
 - UI components should check store `loading` and `error` states
 
+## Spec vs Implementation Gaps
+
+Use this checklist when updating Notion or drafting new work items.
+
+- **Wardrobe capture (Notion §4.1)**: No batch import, background removal, auto-tagging, or item-state machine. Current flow is single photo → manual edits → immediate save as active item.
+- **Preferences & constraints (Notion §4.2)**: Only single-select style archetype, single color palette, formality slider, and two toggles are implemented. Fit constraints, dress-code presets, dislikes, and trust sliders are future work.
+- **Context ingestion (Notion §4.3)**: Weather only. There is no UI for occasion, activity, or commute inputs.
+- **Outfit generation (Notion §4.4)**: Single heuristic outfit with basic explanation. No multiple suggestions, confidence scoring, comfort bands, swaps/locks, or “regenerate except locked slots.”
+- **Save/share/history (Notion §4.5)**: Outfits save automatically post-generation; there is no accept/reject step, share sheet, packing list, or collage export.
+- **Privacy & permissions (Notion §4.6)**: Data lives in local SQLite without deletion/export flows besides the console JSON dump. No analytics or model-improvement opt-in toggles.
+
 ## Known Limitations & Stubs
 
 - **Web platform**: SQLite doesn't work on web. App is designed for iOS/Android only.
 - **Cloud AI**: `useCloudAI` setting exists but is not fully implemented. All recommendations currently use heuristics. LLM infrastructure (Langfuse, Promptfoo) is ready for integration.
 - **Color extraction**: `lib/utils/colorExtractor.ts` returns placeholder gray. Full implementation requires native modules or web APIs.
 - **Export/Import**: Settings screen has export/import buttons but they only log to console. Implement with `expo-file-system` and `expo-sharing`.
+- **Single-outfit flow**: Users can only generate one outfit at a time and are routed to the detail view immediately; multi-look carousels described in specs are not implemented.
+- **Preferences fidelity**: No dress-code presets, fit constraints, dislikes, or “avoid together” tagging despite references in `context/SPECS.md`.
+- **Onboarding scope**: Current onboarding screens do not request wardrobe items, preferences, or analytics consent.
+- **Supabase sync**: Client helpers exist but there is no UI or background job that triggers them.
 
 ## Cloud Sync (Supabase)
 

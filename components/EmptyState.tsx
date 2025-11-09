@@ -8,7 +8,7 @@ import {
   TextStyle,
 } from 'react-native';
 import { Button } from './Button';
-import { colors, spacing, typography, radii } from '@/lib/styles/tokens';
+import { colors, spacing, typography } from '@/lib/styles/tokens';
 
 export interface EmptyStateProps {
   /**
@@ -119,11 +119,7 @@ export function EmptyState({
       {/* Optional CTA Button */}
       {ctaText && onCtaPress && (
         <View style={styles.ctaContainer}>
-          <Button
-            title={ctaText}
-            onPress={onCtaPress}
-            variant={ctaVariant}
-          />
+          <Button title={ctaText} onPress={onCtaPress} variant={ctaVariant} />
         </View>
       )}
     </View>

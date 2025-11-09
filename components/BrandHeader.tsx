@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
-import { BlurView } from 'expo-blur';
 import { Sparkles } from 'lucide-react-native';
 import { spacing, typography, colors } from '@/lib/styles/tokens';
 

@@ -1,11 +1,5 @@
 import { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  Alert,
-} from 'react-native';
+import { View, Text, StyleSheet, TextInput, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Button } from '@/components/Button';
 import { useSettings } from '@/state/useSettings';
@@ -13,7 +7,7 @@ import * as Location from 'expo-location';
 
 export default function OnboardingScreen() {
   const router = useRouter();
-  const { saveSettings, completeOnboarding } = useSettings();
+  const { saveSettings } = useSettings();
 
   const [useGPS, setUseGPS] = useState(true);
   const [city, setCity] = useState('');
@@ -60,13 +54,15 @@ export default function OnboardingScreen() {
       <View style={styles.content}>
         <Text style={styles.title}>Welcome to Suit up!</Text>
         <Text style={styles.subtitle}>
-          Get personalized outfit recommendations based on weather and your style
+          Get personalized outfit recommendations based on weather and your
+          style
         </Text>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Location</Text>
           <Text style={styles.description}>
-            We need your location to provide weather-based outfit recommendations
+            We need your location to provide weather-based outfit
+            recommendations
           </Text>
 
           <View style={styles.options}>
