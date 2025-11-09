@@ -1,7 +1,8 @@
 # Suit Up! — Prompt-Ready Architecture & Coding Context (Markdown Template)
 
-> Copy-paste this into your repo (e.g., `/docs/architecture/prompt-context.md`).  
-> Keep it **living**: update as decisions change. This enables agents (and humans) to produce consistent designs, code, and reviews.
+> **⚠️ Quick Start for Agents:** If you need practical, current architecture info, start with [../AGENTS.md](../AGENTS.md) instead. This document contains the **full system design** including future backend plans, while AGENTS.md focuses on what's actually implemented.
+
+> This is a comprehensive architecture template covering the entire SuitUp system (mobile + backend + AI). Keep it **living**: update as decisions change. This enables agents (and humans) to produce consistent designs, code, and reviews.
 
 ---
 

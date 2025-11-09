@@ -113,9 +113,16 @@ pnpm test:prompts:ui    # Open web UI
 
 ## 📚 Documentation
 
-- Mobile App: See `apps/mobile/CLAUDE.md`
-- Architecture: See `apps/mobile/context/ARCHITECTURE.md`
-- Design System: See `apps/mobile/FIGMA.md`
+### For AI Agents 🤖
+- **[AGENTS.md](AGENTS.md)** - Start here! Navigation guide for AI agents
+  - [apps/mobile/AGENTS.md](apps/mobile/AGENTS.md) - Mobile app architecture & patterns
+  - [apps/api/AGENTS.md](apps/api/AGENTS.md) - Backend API architecture & patterns
+
+### For Developers 👨‍💻
+- **Mobile App**: See [apps/mobile/CLAUDE.md](apps/mobile/CLAUDE.md) - Comprehensive app context
+- **Architecture**: See [apps/mobile/context/ARCHITECTURE.md](apps/mobile/context/ARCHITECTURE.md)
+- **Design System**: See [apps/mobile/FIGMA.md](apps/mobile/FIGMA.md)
+- **Migration Guide**: See [MIGRATION.md](MIGRATION.md) - Monorepo migration details
 
 ## ⚙️ Environment Variables
 

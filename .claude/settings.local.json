@@ -10,7 +10,8 @@
       "Bash(cat:*)",
       "Bash(git mv:*)",
       "Bash([ -d .expo ])",
-      "Bash([ -f README.md ])"
+      "Bash([ -f README.md ])",
+      "Bash([ -f AGENTS.md ])"
     ],
     "deny": [],
     "ask": []
