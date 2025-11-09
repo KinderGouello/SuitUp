@@ -37,3 +37,11 @@ pnpm-debug.log*
 
 # typescript
 *.tsbuildinfo
+
+# turborepo
+.turbo
+
+# changeset
+.changeset/*.md
+!.changeset/README.md
+!.changeset/config.json

@@ -1,0 +1,11 @@
+{
+  "name": "@suitup/typescript-config",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Shared TypeScript configuration for SuitUp monorepo",
+  "files": [
+    "base.json",
+    "expo.json",
+    "node.json"
+  ]
+}

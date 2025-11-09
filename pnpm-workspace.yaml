@@ -1,0 +1,8 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+# Required for React Native/Expo compatibility
+# Metro bundler expects flat node_modules structure
+shared-workspace-lockfile: true
+shamefully-hoist: true

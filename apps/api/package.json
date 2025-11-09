@@ -1,0 +1,29 @@
+{
+  "name": "@suitup/api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SuitUp Backend API - Node.js/Fastify",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/**/*.ts",
+    "clean": "rm -rf dist node_modules/.cache"
+  },
+  "dependencies": {
+    "fastify": "^5.2.0"
+  },
+  "devDependencies": {
+    "@suitup/eslint-config": "workspace:*",
+    "@suitup/typescript-config": "workspace:*",
+    "@types/node": "^22.10.5",
+    "tsx": "^4.19.2",
+    "typescript": "~5.9.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
