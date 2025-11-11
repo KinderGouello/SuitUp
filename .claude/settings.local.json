@@ -11,7 +11,8 @@
       "Bash(git mv:*)",
       "Bash([ -d .expo ])",
       "Bash([ -f README.md ])",
-      "Bash([ -f AGENTS.md ])"
+      "Bash([ -f AGENTS.md ])",
+      "Bash(npx tsc:*)"
     ],
     "deny": [],
     "ask": []
