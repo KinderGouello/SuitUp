@@ -12,16 +12,21 @@
     "dev": "turbo run dev --parallel",
     "dev:mobile": "turbo run dev --filter=@suitup/mobile",
     "dev:api": "turbo run dev --filter=@suitup/api",
+    "dev:api:doppler": "doppler run --command 'turbo run dev --filter=@suitup/api'",
     "build": "turbo run build",
     "build:mobile": "turbo run build --filter=@suitup/mobile",
     "build:api": "turbo run build --filter=@suitup/api",
+    "build:api:doppler": "doppler run --command 'turbo run build --filter=@suitup/api'",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
+    "typecheck:api": "turbo run typecheck --filter=@suitup/api",
     "clean": "turbo run clean && rm -rf node_modules",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "turbo run build && changeset publish"
+    "release": "turbo run build && changeset publish",
+    "doppler:setup": "doppler setup",
+    "doppler:login": "doppler login"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",

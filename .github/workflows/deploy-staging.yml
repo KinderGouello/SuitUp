@@ -1,0 +1,137 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/api/**'
+      - 'packages/**'
+      - 'pnpm-lock.yaml'
+      - 'turbo.json'
+      - '.github/workflows/deploy-staging.yml'
+
+# Prevent concurrent staging deployments
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to Railway Staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: staging
+      url: ${{ steps.deploy.outputs.url }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      # Optional: Install Doppler CLI for secrets management
+      # Uncomment when DOPPLER_TOKEN is available
+      # - name: Install Doppler CLI
+      #   uses: dopplerhq/cli-action@v3
+      #
+      # - name: Load secrets from Doppler
+      #   run: doppler secrets download --no-file --format env > .env
+      #   env:
+      #     DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
+
+      # Install Railway CLI
+      - name: Install Railway CLI
+        run: npm i -g @railway/cli
+
+      # Deploy to Railway staging environment
+      - name: Deploy to Railway
+        id: deploy
+        run: |
+          echo "🚀 Deploying to Railway staging..."
+
+          # Deploy using Railway CLI (uses Dockerfile automatically)
+          railway up --service api --environment staging
+
+          # Get the deployment URL
+          DEPLOYMENT_URL=$(railway status --service api --environment staging --json | jq -r '.url')
+          echo "url=https://${DEPLOYMENT_URL}" >> $GITHUB_OUTPUT
+
+          echo "✅ Deployment initiated to staging"
+          echo "📍 URL: https://${DEPLOYMENT_URL}"
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+      # Wait for deployment to be ready
+      - name: Wait for deployment
+        run: |
+          echo "⏳ Waiting for deployment to be ready..."
+          sleep 30
+        timeout-minutes: 2
+
+      # Health check with retries
+      - name: Health check
+        id: health-check
+        run: |
+          DEPLOYMENT_URL="${{ steps.deploy.outputs.url }}"
+          MAX_RETRIES=3
+          RETRY_COUNT=0
+          SLEEP_TIME=10
+
+          echo "🏥 Running health check on ${DEPLOYMENT_URL}/health"
+
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "${DEPLOYMENT_URL}/health" || echo "000")
+
+            if [ "$HTTP_CODE" = "200" ]; then
+              echo "✅ Health check passed (HTTP $HTTP_CODE)"
+              exit 0
+            else
+              RETRY_COUNT=$((RETRY_COUNT + 1))
+              if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+                echo "⚠️  Health check failed (HTTP $HTTP_CODE). Retrying in ${SLEEP_TIME}s... (Attempt $RETRY_COUNT/$MAX_RETRIES)"
+                sleep $SLEEP_TIME
+              else
+                echo "❌ Health check failed after $MAX_RETRIES attempts (HTTP $HTTP_CODE)"
+                exit 1
+              fi
+            fi
+          done
+        timeout-minutes: 2
+
+      # Deployment summary
+      - name: Deployment summary
+        if: success()
+        run: |
+          echo "## 🚀 Staging Deployment Successful" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** Staging" >> $GITHUB_STEP_SUMMARY
+          echo "**URL:** ${{ steps.deploy.outputs.url }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Health check passed" >> $GITHUB_STEP_SUMMARY
+
+      # Notify on failure
+      - name: Deployment failure summary
+        if: failure()
+        run: |
+          echo "## ❌ Staging Deployment Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** Staging" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Please check the logs above for details." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Common issues:**" >> $GITHUB_STEP_SUMMARY
+          echo "- Health check endpoint not responding" >> $GITHUB_STEP_SUMMARY
+          echo "- Database connection failed" >> $GITHUB_STEP_SUMMARY
+          echo "- Environment variables missing" >> $GITHUB_STEP_SUMMARY

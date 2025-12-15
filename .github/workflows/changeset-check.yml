@@ -1,0 +1,187 @@
+name: Changeset Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+    branches: [main]
+
+jobs:
+  changeset-check:
+    name: Validate Changeset
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history to check file changes
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Check if PR has the 'skip-changeset' label
+      - name: Check for skip-changeset label
+        id: check-label
+        run: |
+          if [[ "${{ contains(github.event.pull_request.labels.*.name, 'skip-changeset') }}" == "true" ]]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "✅ PR has 'skip-changeset' label - skipping changeset validation"
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      # Check if PR modifies API code
+      - name: Check for API code changes
+        id: api-changes
+        if: steps.check-label.outputs.skip == 'false'
+        run: |
+          # Get list of changed files
+          git fetch origin main:main
+          CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
+
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+
+          # Check if any API files were modified
+          if echo "$CHANGED_FILES" | grep -q "^apps/api/"; then
+            echo "has_api_changes=true" >> $GITHUB_OUTPUT
+            echo "🔍 API code changes detected"
+          else
+            echo "has_api_changes=false" >> $GITHUB_OUTPUT
+            echo "ℹ️  No API code changes detected"
+          fi
+
+      # Check if commit is a special type that doesn't require changeset
+      - name: Check commit type
+        id: commit-type
+        if: steps.check-label.outputs.skip == 'false' && steps.api-changes.outputs.has_api_changes == 'true'
+        run: |
+          # Get PR title and commits
+          PR_TITLE="${{ github.event.pull_request.title }}"
+
+          # Check if PR is docs-only, CI-only, or chore-only
+          if [[ "$PR_TITLE" =~ ^(docs|ci|chore|style|refactor|test)(\(.+\))?:.+ ]]; then
+            COMMIT_TYPE=$(echo "$PR_TITLE" | sed -n 's/^\([a-z]*\).*/\1/p')
+            echo "exempt=true" >> $GITHUB_OUTPUT
+            echo "type=$COMMIT_TYPE" >> $GITHUB_OUTPUT
+            echo "✅ PR type '$COMMIT_TYPE' is exempt from changeset requirement"
+          else
+            echo "exempt=false" >> $GITHUB_OUTPUT
+            echo "⚠️  PR requires a changeset"
+          fi
+
+      # Run changesets status check
+      - name: Check for changeset
+        id: changeset-status
+        if: |
+          steps.check-label.outputs.skip == 'false' &&
+          steps.api-changes.outputs.has_api_changes == 'true' &&
+          steps.commit-type.outputs.exempt == 'false'
+        run: |
+          # Check if .changeset directory has any new changeset files
+          CHANGESET_FILES=$(git diff --name-only origin/main...HEAD | grep "^.changeset/.*\.md$" | grep -v "README.md" || true)
+
+          if [ -n "$CHANGESET_FILES" ]; then
+            echo "has_changeset=true" >> $GITHUB_OUTPUT
+            echo "✅ Changeset file(s) found:"
+            echo "$CHANGESET_FILES"
+          else
+            echo "has_changeset=false" >> $GITHUB_OUTPUT
+            echo "❌ No changeset files found"
+          fi
+
+      # Post status comment
+      - name: Comment on PR
+        if: |
+          steps.check-label.outputs.skip == 'false' &&
+          steps.api-changes.outputs.has_api_changes == 'true' &&
+          steps.commit-type.outputs.exempt == 'false' &&
+          steps.changeset-status.outputs.has_changeset == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const comment = `## ⚠️ Changeset Required
+
+            This PR modifies API code but doesn't include a changeset.
+
+            ### To add a changeset:
+
+            \`\`\`bash
+            pnpm changeset
+            \`\`\`
+
+            Then select:
+            - Which package changed: \`@suitup/api\`
+            - Type of change: \`patch\` / \`minor\` / \`major\`
+            - Description: Write a brief summary of changes
+
+            ### To skip changeset requirement:
+
+            If this PR is truly exempt (e.g., internal refactoring with no API changes):
+            - Add the \`skip-changeset\` label to this PR
+
+            ### What are changesets?
+
+            Changesets help us:
+            - 📝 Generate automatic changelogs
+            - 🔖 Version packages correctly
+            - 🚀 Trigger production deployments
+
+            [Learn more about changesets](https://github.com/changesets/changesets)
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      # Fail the check if changeset is missing
+      - name: Fail if changeset missing
+        if: |
+          steps.check-label.outputs.skip == 'false' &&
+          steps.api-changes.outputs.has_api_changes == 'true' &&
+          steps.commit-type.outputs.exempt == 'false' &&
+          steps.changeset-status.outputs.has_changeset == 'false'
+        run: |
+          echo "❌ Changeset is required for this PR"
+          echo ""
+          echo "This PR modifies API code but doesn't include a changeset."
+          echo ""
+          echo "To add a changeset, run: pnpm changeset"
+          echo ""
+          echo "To skip this check, add the 'skip-changeset' label to the PR"
+          exit 1
+
+      # Success summary
+      - name: Success summary
+        if: success()
+        run: |
+          if [[ "${{ steps.check-label.outputs.skip }}" == "true" ]]; then
+            echo "## ✅ Changeset Check Passed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "PR has 'skip-changeset' label - validation skipped" >> $GITHUB_STEP_SUMMARY
+          elif [[ "${{ steps.api-changes.outputs.has_api_changes }}" == "false" ]]; then
+            echo "## ✅ Changeset Check Passed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "No API code changes detected - changeset not required" >> $GITHUB_STEP_SUMMARY
+          elif [[ "${{ steps.commit-type.outputs.exempt }}" == "true" ]]; then
+            echo "## ✅ Changeset Check Passed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "PR type '${{ steps.commit-type.outputs.type }}' is exempt from changeset requirement" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## ✅ Changeset Check Passed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Changeset file found - version bump and changelog will be generated automatically" >> $GITHUB_STEP_SUMMARY
+          fi

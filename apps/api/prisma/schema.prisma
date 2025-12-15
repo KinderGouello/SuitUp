@@ -1,0 +1,186 @@
+// Prisma schema for SuitUp Backend API
+// Database: PostgreSQL (via Supabase)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model - represents app users
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // User can have many wardrobe items
+  items       Item[]
+  // User preferences
+  preferences Preferences?
+  // User's generated outfits
+  outfits     Outfit[]
+  // User settings
+  settings    Settings?
+
+  @@map("users")
+}
+
+// Preferences model - stores user style preferences
+model Preferences {
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Style preferences
+  styleArchetype   String? // e.g., "minimal", "classic", "trendy"
+  colorPalette     String? // e.g., "neutral", "bold", "pastel"
+  formalityLevel   Int     @default(5) // 0-10 scale
+  avoidedTags      String[] // Tags to avoid in recommendations
+  preferredSeasons String[] // Preferred seasons
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("preferences")
+}
+
+// Settings model - app configuration per user
+model Settings {
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Location settings
+  locationMode         String  @default("gps") // "gps" or "manual"
+  manualCity           String?
+  manualCountry        String?
+  // Feature flags
+  useCloudAI           Boolean @default(false)
+  enableSupabaseSync   Boolean @default(false)
+  // Onboarding
+  onboardingCompleted  Boolean @default(false)
+  // Units
+  temperatureUnit      String  @default("celsius") // "celsius" or "fahrenheit"
+  // Notifications
+  dailyRecommendations Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("settings")
+}
+
+// Item model - represents a wardrobe item
+model Item {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Basic item info
+  name        String
+  category    String // "top", "bottom", "dress", "outerwear", "shoes", "accessory", "athleisure"
+  photoUrl    String? // URL to photo (if using cloud storage)
+  colors      String[] // Array of hex colors
+  brand       String?
+  notes       String?
+  // Weather attributes
+  warmth      Int      @default(0) // 0-5 scale
+  waterproof  Boolean  @default(false)
+  windproof   Boolean  @default(false)
+  // Style attributes
+  formality   Int      @default(5) // 0-10 scale
+  tags        String[] // e.g., ["casual", "work", "sporty"]
+  seasons     String[] // e.g., ["summer", "winter"]
+  // Usage tracking
+  lastWornAt  DateTime?
+  timesWorn   Int      @default(0)
+  // Status
+  isArchived  Boolean  @default(false)
+  isFavorite  Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  outfitItems OutfitItem[]
+
+  @@map("items")
+}
+
+// Outfit model - represents a generated outfit
+model Outfit {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Outfit metadata
+  name        String?
+  occasion    String? // e.g., "work", "casual", "date"
+  explanation String? // AI-generated explanation for the outfit
+  // Weather context when outfit was created
+  temperature Float?
+  weather     String? // e.g., "sunny", "rainy", "cloudy"
+  windSpeed   Float?
+  // Status
+  isFavorite  Boolean  @default(false)
+  isWorn      Boolean  @default(false)
+  wornAt      DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Items in this outfit
+  items OutfitItem[]
+
+  @@map("outfits")
+}
+
+// OutfitItem model - join table for Outfit and Item (many-to-many)
+model OutfitItem {
+  id       String @id @default(uuid())
+  outfitId String
+  outfit   Outfit @relation(fields: [outfitId], references: [id], onDelete: Cascade)
+  itemId   String
+  item     Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  // Slot in the outfit (e.g., "top", "bottom", "shoes")
+  slot String
+
+  createdAt DateTime @default(now())
+
+  @@unique([outfitId, itemId])
+  @@map("outfit_items")
+}
+
+// WeatherSnapshot model - cache weather data
+model WeatherSnapshot {
+  id String @id @default(uuid())
+
+  // Location
+  city      String
+  country   String?
+  latitude  Float?
+  longitude Float?
+  // Weather data
+  temperature      Float
+  feelsLike        Float?
+  humidity         Int?
+  precipitation    Float   @default(0)
+  precipProbability Int?
+  windSpeed        Float   @default(0)
+  windDirection    Int?
+  cloudCover       Int?
+  uvIndex          Int?
+  weatherCode      Int? // WMO weather code
+  description      String?
+  // Validity
+  fetchedAt        DateTime @default(now())
+  expiresAt        DateTime
+
+  @@map("weather_snapshots")
+}

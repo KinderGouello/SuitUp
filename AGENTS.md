@@ -1,3 +1,5 @@
+First of all, DO NOT WRITE ANY MARKDOWN FILES without my permission !!!
+
 # SuitUp Monorepo - AI Agent Guide
 
 **Welcome, AI Agent!** This document provides a quick navigation guide to help you understand and work with the SuitUp monorepo efficiently.
