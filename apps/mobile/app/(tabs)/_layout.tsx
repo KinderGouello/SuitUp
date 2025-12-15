@@ -1,10 +1,89 @@
-import { Tabs } from 'expo-router';
-import { View, Text, StyleSheet, Platform } from 'react-native';
+import { Tabs, useRouter } from 'expo-router';
+import React from 'react';
+import { View, Text, StyleSheet, Platform, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Home, Shirt, Plus, Settings, Sparkles } from 'lucide-react-native';
 import { theme, spacing, radii, elevation, colors } from '@/lib/styles/tokens';
 import { BlurView } from 'expo-blur';
+
+// Custom Tab Bar Component with Add Button
+function CustomTabBar({ state, descriptors, navigation }: any) {
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
+
+  return (
+    <View
+      style={[
+        styles.customTabBar,
+        {
+          paddingBottom: insets.bottom + spacing.sm,
+          height: 80 + insets.bottom,
+        },
+      ]}
+    >
+      {Platform.OS !== 'web' && (
+        <BlurView intensity={80} tint="light" style={StyleSheet.absoluteFill} />
+      )}
+        {state.routes.map((route: any, index: number) => {
+          const { options } = descriptors[route.key];
+          const isFocused = state.index === index;
+
+          const onPress = () => {
+            const event = navigation.emit({
+              type: 'tabPress',
+              target: route.key,
+              canPreventDefault: true,
+            });
+
+            if (!isFocused && !event.defaultPrevented) {
+              navigation.navigate(route.name);
+            }
+          };
+
+          // Insert Add button after Closet (index 1)
+          if (index === 1) {
+            return (
+              <React.Fragment key={`${route.key}-with-add`}>
+                <Pressable
+                  key={route.key}
+                  onPress={onPress}
+                  style={styles.tabBarItem}
+                >
+                  {options.tabBarIcon?.({ focused: isFocused })}
+                </Pressable>
+                {/* Custom Add Button */}
+                <Pressable
+                  key="add-button"
+                  onPress={() => router.push('/item/new')}
+                  style={styles.tabBarItem}
+                >
+                  <TabIcon
+                    icon={
+                      <Plus size={20} color={colors.white} strokeWidth={2.5} />
+                    }
+                    label="Add"
+                    focused={false}
+                    isAddButton
+                  />
+                </Pressable>
+              </React.Fragment>
+            );
+          }
+
+          return (
+            <Pressable
+              key={route.key}
+              onPress={onPress}
+              style={styles.tabBarItem}
+            >
+              {options.tabBarIcon?.({ focused: isFocused })}
+            </Pressable>
+          );
+        })}
+    </View>
+  );
+}
 
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
@@ -20,6 +99,7 @@ export default function TabLayout() {
       />
       <View style={[styles.tabsWrapper, { paddingTop: insets.top }]}>
         <Tabs
+          tabBar={(props) => <CustomTabBar {...props} />}
           sceneContainerStyle={styles.sceneContainer}
           screenOptions={{
             headerShown: false,
@@ -98,24 +178,6 @@ export default function TabLayout() {
                   label="Closet"
                   focused={focused}
                   showSparkle={focused}
-                />
-              ),
-            }}
-          />
-          <Tabs.Screen
-            name="settings"
-            options={{
-              title: 'Add',
-              headerTitle: 'Add Item',
-              href: '/item/new',
-              tabBarIcon: ({ focused }) => (
-                <TabIcon
-                  icon={
-                    <Plus size={20} color={colors.white} strokeWidth={2.5} />
-                  }
-                  label="Add"
-                  focused={focused}
-                  isAddButton
                 />
               ),
             }}
@@ -343,5 +405,23 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -4, // -top-1 in Figma
     right: -4, // -right-1 in Figma
+  },
+  customTabBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderTopWidth: 2,
+    borderTopColor: colors.indigo100,
+    paddingTop: spacing.md,
+    paddingHorizontal: spacing.md,
+    ...elevation.xl,
+  },
+  tabBarItem: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

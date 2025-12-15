@@ -50,7 +50,7 @@ export default function HomeScreen() {
   useFocusEffect(
     useCallback(() => {
       initializeData();
-    }, [])
+    }, []),
   );
 
   const initializeData = async () => {
@@ -165,7 +165,7 @@ export default function HomeScreen() {
       Alert.alert(
         'No items',
         "Let's build your closet. Add your first item to get personalized outfits.",
-        [{ text: 'Add Item', onPress: () => router.push('/item/new') }]
+        [{ text: 'Add Item', onPress: () => router.push('/item/new') }],
       );
       return;
     }
@@ -197,7 +197,7 @@ export default function HomeScreen() {
         'Error',
         error instanceof Error
           ? error.message
-          : 'Could not build a complete outfit'
+          : 'Could not build a complete outfit',
       );
     } finally {
       setGeneratingOutfit(false);
@@ -248,21 +248,16 @@ export default function HomeScreen() {
           />
         )}
 
-        {/* Weather Card */}
-        {weather ? (
+        {/* Today's Perfect Match Section */}
+        {latestOutfit && items.length > 0 && (
           <View style={styles.weatherContainer}>
-            <WeatherBadge weather={weather} />
-          </View>
-        ) : needsWeatherSetup ? (
-          <View style={styles.weatherContainer}>
-            <WeatherSetup onWeatherLoaded={handleWeatherLoaded} />
-          </View>
-        ) : (
-          <View style={styles.weatherPlaceholder}>
-            <ActivityIndicator size="small" color={theme.accent} />
-            <Text style={styles.weatherPlaceholderText}>
-              Fetching weather data...
-            </Text>
+            <View style={styles.dashboardSection}>
+              <TodaysPerfectMatch
+                outfit={latestOutfit}
+                items={items}
+                onPress={() => router.push(`/outfit/${latestOutfit.id}`)}
+              />
+            </View>
           </View>
         )}
 
@@ -319,6 +314,24 @@ export default function HomeScreen() {
           </GradientCard>
         )}
 
+        {/* Weather Card */}
+        {weather ? (
+          <View style={styles.weatherContainer}>
+            <WeatherBadge weather={weather} />
+          </View>
+        ) : needsWeatherSetup ? (
+          <View style={styles.weatherContainer}>
+            <WeatherSetup onWeatherLoaded={handleWeatherLoaded} />
+          </View>
+        ) : (
+          <View style={styles.weatherPlaceholder}>
+            <ActivityIndicator size="small" color={theme.accent} />
+            <Text style={styles.weatherPlaceholderText}>
+              Fetching weather data...
+            </Text>
+          </View>
+        )}
+
         {/* Empty State - Always visible when no items */}
         {(!items || items.length === 0) && (
           <View style={styles.emptyState}>
@@ -340,19 +353,6 @@ export default function HomeScreen() {
               variant="outline"
               size="lg"
             />
-          </View>
-        )}
-
-        {/* Today's Perfect Match Section */}
-        {latestOutfit && items.length > 0 && (
-          <View style={styles.weatherContainer}>
-            <View style={styles.dashboardSection}>
-              <TodaysPerfectMatch
-                outfit={latestOutfit}
-                items={items}
-                onPress={() => router.push(`/outfit/${latestOutfit.id}`)}
-              />
-            </View>
           </View>
         )}
       </ScrollView>
