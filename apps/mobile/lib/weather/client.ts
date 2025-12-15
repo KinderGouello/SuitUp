@@ -6,6 +6,27 @@ export interface WeatherClient {
   ): Promise<WeatherSnapshot>;
 }
 
+interface OpenMeteoCurrentWeather {
+  current: {
+    temperature_2m: number;
+    apparent_temperature: number;
+    precipitation: number;
+    wind_speed_10m: number;
+    weather_code: number;
+  };
+  daily: {
+    temperature_2m_max: number[];
+    temperature_2m_min: number[];
+  };
+}
+
+interface GeocodingResult {
+  results?: Array<{
+    latitude: number;
+    longitude: number;
+  }>;
+}
+
 class OpenMeteoClient implements WeatherClient {
   async getCurrentWeather(
     location: { lat: number; lon: number } | { city: string }
@@ -33,7 +54,7 @@ class OpenMeteoClient implements WeatherClient {
       throw new Error(`Weather API error: ${response.statusText}`);
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as OpenMeteoCurrentWeather;
 
     const weatherCode = data.current.weather_code;
     const condition = this.getConditionFromCode(weatherCode);
@@ -64,7 +85,7 @@ class OpenMeteoClient implements WeatherClient {
       throw new Error(`Geocoding API error: ${response.statusText}`);
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as GeocodingResult;
 
     if (!data.results || data.results.length === 0) {
       throw new Error(`City not found: ${city}`);

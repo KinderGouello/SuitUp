@@ -87,6 +87,7 @@ export interface WeatherSnapshot {
   feelsLikeC: number;
   windKph: number;
   precipMm: number;
+  humidity?: number;
   condition: string;
 }
 

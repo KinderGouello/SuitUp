@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
   },
   tagline: {
     ...typography.bodySmall,
-    color: colors.gray600,
+    color: colors.gray,
     textAlign: 'center',
   },
 });

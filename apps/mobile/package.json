@@ -14,6 +14,9 @@
     "build:web": "expo export --platform web",
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest watch",
     "clean": "rm -rf .expo dist web-build node_modules/.cache",
     "test:prompts": "promptfoo eval",
     "test:prompts:ui": "promptfoo eval && promptfoo view",
@@ -72,10 +75,14 @@
     "@babel/core": "^7.25.2",
     "@suitup/eslint-config": "workspace:*",
     "@suitup/typescript-config": "workspace:*",
+    "@testing-library/react-native": "^13.3.3",
     "@types/react": "~19.1.10",
+    "@vitest/coverage-v8": "^2.1.8",
     "eslint": "^9.0.0",
     "eslint-config-expo": "~10.0.0",
+    "happy-dom": "^20.0.11",
     "promptfoo": "^0.119.3",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "vitest": "^2.1.8"
   }
 }

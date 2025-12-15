@@ -46,7 +46,7 @@ export function TodaysPerfectMatch({
       {/* Header with title/subtitle and AI Picked badge */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <Text style={styles.sectionTitle}>Today's Perfect Match</Text>
+          <Text style={styles.sectionTitle}>Today&apos;s Perfect Match</Text>
           <Text style={styles.sectionSubtitle}>
             Styled for {outfit.weather.tempC}° and{' '}
             {outfit.weather.condition.toLowerCase()}

@@ -248,7 +248,7 @@ export default function OutfitDetailScreen() {
             </GradientText>
 
             <Text style={styles.generationDescription}>
-              Let AI create your perfect outfit based on today's weather and
+              Let AI create your perfect outfit based on today&apos;s weather and
               your style preferences.
             </Text>
 

@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: theme.background,
     borderWidth: 1,
-    borderColor: theme.border,
+    borderColor: theme.border_subtle,
     borderRadius: radii.lg,
     padding: spacing.lg,
     ...typography.body,

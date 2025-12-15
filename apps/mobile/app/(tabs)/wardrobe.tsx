@@ -47,7 +47,7 @@ export default function WardrobeScreen() {
     }
   };
 
-  const filterOptions: Array<{ label: string; value: Category | 'all' }> = [
+  const filterOptions: { label: string; value: Category | 'all' }[] = [
     { label: 'All', value: 'all' },
     { label: 'Tops', value: 'top' },
     { label: 'Bottoms', value: 'bottom' },

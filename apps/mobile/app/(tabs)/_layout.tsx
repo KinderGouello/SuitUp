@@ -100,7 +100,6 @@ export default function TabLayout() {
       <View style={[styles.tabsWrapper, { paddingTop: insets.top }]}>
         <Tabs
           tabBar={(props) => <CustomTabBar {...props} />}
-          sceneContainerStyle={styles.sceneContainer}
           screenOptions={{
             headerShown: false,
             headerStyle: {
@@ -329,8 +328,6 @@ const styles = StyleSheet.create({
   },
   tabsWrapper: {
     flex: 1,
-  },
-  sceneContainer: {
     backgroundColor: theme.background,
   },
   tabButton: {
