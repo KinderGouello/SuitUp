@@ -1,0 +1,173 @@
+name: Mobile Preview Builds
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/mobile/**'
+      - 'packages/**'
+      - 'pnpm-lock.yaml'
+  workflow_dispatch: # Allow manual trigger
+
+# Only one preview build at a time
+concurrency:
+  group: mobile-preview
+  cancel-in-progress: false
+
+jobs:
+  preview:
+    name: Build & Submit Preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Doppler CLI
+        uses: dopplerhq/cli-action@v3
+
+      - name: Load secrets from Doppler
+        working-directory: apps/mobile
+        run: doppler secrets download --no-file --format env-no-quotes > .env
+        env:
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN_PREVIEW }}
+
+      - name: Build iOS (preview)
+        working-directory: apps/mobile
+        run: |
+          eas build \
+            --platform ios \
+            --profile preview \
+            --non-interactive \
+            --no-wait
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+
+      - name: Build Android (preview)
+        working-directory: apps/mobile
+        run: |
+          eas build \
+            --platform android \
+            --profile preview \
+            --non-interactive \
+            --no-wait
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+
+      - name: Wait for builds to complete
+        working-directory: apps/mobile
+        run: |
+          echo "Builds started! Monitor progress at:"
+          echo "https://expo.dev/accounts/${{ secrets.EXPO_USERNAME }}/projects/suitup/builds"
+          echo ""
+          echo "Note: Builds are running in the background."
+          echo "Once complete, they will be automatically submitted to TestFlight and Internal Testing."
+
+      - name: Comment on PR (if applicable)
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const message = `## 📱 Preview Builds Started
+
+            Your preview builds are being processed by EAS Build.
+
+            **Monitor Progress:**
+            [View Builds on Expo](https://expo.dev/accounts/${{ secrets.EXPO_USERNAME }}/projects/suitup/builds)
+
+            **Once complete:**
+            - iOS: Available on TestFlight (check your email)
+            - Android: Available on Internal Testing track
+
+            **Install via QR code:**
+            Visit the builds page to get QR codes for installation.`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: message
+            });
+
+  publish-update:
+    name: Publish OTA Update
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Publish OTA update to preview channel
+        working-directory: apps/mobile
+        run: |
+          eas update \
+            --branch preview \
+            --message "Preview update from ${{ github.sha }}" \
+            --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Create deployment comment
+        uses: actions/github-script@v7
+        if: github.event_name == 'push'
+        with:
+          script: |
+            const message = `## 🚀 OTA Update Published
+
+            A new over-the-air update has been published to the **preview** channel.
+
+            **Update Details:**
+            - Commit: ${context.sha.substring(0, 7)}
+            - Branch: preview
+            - Message: Preview update from ${context.sha}
+
+            Users with the preview build will receive this update on next app launch.`;
+
+            github.rest.repos.createCommitComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+              body: message
+            });

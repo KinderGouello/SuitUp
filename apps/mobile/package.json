@@ -9,7 +9,7 @@
     "pnpm": ">=9.0.0"
   },
   "scripts": {
-    "dev": "EXPO_NO_TELEMETRY=1 npx expo start",
+    "dev": "doppler run --command 'EXPO_NO_TELEMETRY=1 npx expo start'",
     "build": "expo export --platform web",
     "build:web": "expo export --platform web",
     "lint": "expo lint",
