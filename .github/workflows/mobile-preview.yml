@@ -53,18 +53,6 @@ jobs:
         env:
           DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN_PREVIEW }}
 
-      - name: Build iOS (preview)
-        working-directory: apps/mobile
-        run: |
-          eas build \
-            --platform ios \
-            --profile preview \
-            --non-interactive \
-            --no-wait
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-
       - name: Build Android (preview)
         working-directory: apps/mobile
         run: |
@@ -77,33 +65,34 @@ jobs:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
-      - name: Wait for builds to complete
+      - name: Wait for build to complete
         working-directory: apps/mobile
         run: |
-          echo "Builds started! Monitor progress at:"
+          echo "Android build started! Monitor progress at:"
           echo "https://expo.dev/accounts/${{ secrets.EXPO_USERNAME }}/projects/suitup/builds"
           echo ""
-          echo "Note: Builds are running in the background."
-          echo "Once complete, they will be automatically submitted to TestFlight and Internal Testing."
+          echo "Note: Build is running in the background."
+          echo "Once complete, it will be automatically submitted to Internal Testing."
 
       - name: Comment on PR (if applicable)
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
         with:
           script: |
-            const message = `## 📱 Preview Builds Started
+            const message = `## 📱 Preview Build Started
 
-            Your preview builds are being processed by EAS Build.
+            Your Android preview build is being processed by EAS Build.
 
             **Monitor Progress:**
             [View Builds on Expo](https://expo.dev/accounts/${{ secrets.EXPO_USERNAME }}/projects/suitup/builds)
 
             **Once complete:**
-            - iOS: Available on TestFlight (check your email)
             - Android: Available on Internal Testing track
 
             **Install via QR code:**
-            Visit the builds page to get QR codes for installation.`;
+            Visit the builds page to get a QR code for installation.
+
+            **Note**: This app is Android-only. iOS support has been removed.`;
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,

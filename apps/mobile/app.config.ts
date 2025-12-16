@@ -22,15 +22,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   scheme: 'suitup',
   userInterfaceStyle: 'automatic',
   newArchEnabled: true,
-  ios: {
-    bundleIdentifier: 'com.suitup.app',
-    supportsTablet: true,
-    infoPlist: {
-      ITSAppUsesNonExemptEncryption: false,
-      NSCameraUsageDescription: 'Allow SuitUp to take photos of clothing items',
-      NSPhotoLibraryUsageDescription: 'Allow SuitUp to access your photo library',
-    },
-  },
   android: {
     package: ANDROID_PACKAGE,
     versionCode: versionCode,
